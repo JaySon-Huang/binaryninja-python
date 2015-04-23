@@ -13,8 +13,9 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from PySide.QtCore import *
-from PySide.QtGui import *
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
 from Fonts import *
 import code
 import sys
@@ -163,8 +164,8 @@ class PythonConsoleThread(threading.Thread):
 				self.done.set()
 
 class PythonConsoleLineEdit(QLineEdit):
-	prevHistory = Signal(())
-	nextHistory = Signal(())
+	prevHistory = pyqtSignal(())
+	nextHistory = pyqtSignal(())
 
 	def __init__(self, *args):
 		super(PythonConsoleLineEdit, self).__init__(*args)
@@ -353,7 +354,7 @@ class PythonConsole(QWidget):
 
 	def read_stdin(self, size):
 		if Threads.is_gui_thread():
-			raise RuntimeError, "Cannot call read_stdin from GUI thread"
+			raise RuntimeError("Cannot call read_stdin from GUI thread")
 
 		if len(self.input_result) == 0:
 			Threads.run_on_gui_thread(self.request_input)
@@ -371,7 +372,7 @@ class PythonConsole(QWidget):
 
 	def readline_stdin(self):
 		if Threads.is_gui_thread():
-			raise RuntimeError, "Cannot call readline_stdin from GUI thread"
+			raise RuntimeError("Cannot call readline_stdin from GUI thread")
 
 		if len(self.input_result) == 0:
 			Threads.run_on_gui_thread(self.request_input)

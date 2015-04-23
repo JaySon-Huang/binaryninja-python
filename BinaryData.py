@@ -15,7 +15,7 @@
 
 import struct
 import io
-import thread
+import _thread
 import Threads
 
 DATA_ORIGINAL = 0
@@ -165,7 +165,7 @@ class BinaryAccessor:
 				return self.read(start, end - start)
 			else:
 				result = ""
-				for i in xrange(start, end, offset.step):
+				for i in range(start, end, offset.step):
 					part = self.read(i, 1)
 					if len(part) == 0:
 						return result
@@ -199,7 +199,7 @@ class BinaryAccessor:
 			else:
 				rel_offset = 0
 				j = 0
-				for i in xrange(start, end, offset.step):
+				for i in range(start, end, offset.step):
 					if j < len(value):
 						self.write(i + rel_offset, value[j])
 					else:
@@ -226,7 +226,7 @@ class BinaryAccessor:
 				self.remove(start, end - start)
 			else:
 				rel_offset = 0
-				for i in xrange(start, end, offset.step):
+				for i in range(start, end, offset.step):
 					self.remove(i + rel_offset)
 					rel_offset -= 1
 		else:
@@ -258,7 +258,7 @@ class RemoveUndoEntry:
 
 class BinaryData(BinaryAccessor):
 	def __init__(self, data = ""):
-		self.data = data
+		self.data = data.encode('utf-8')
 		self.modification = [DATA_ORIGINAL] * len(data)
 		self.modified = False
 		self.callbacks = []
@@ -289,7 +289,7 @@ class BinaryData(BinaryAccessor):
 		self.insert_undo_entry(undo_entry, self.undo_write, self.redo_write)
 
 		self.data = self.data[0:ofs] + data + self.data[ofs+len(data):]
-		for i in xrange(ofs, ofs + len(data)):
+		for i in range(ofs, ofs + len(data)):
 			if self.modification[i] == DATA_ORIGINAL:
 				self.modification[i] = DATA_CHANGED
 		for cb in self.callbacks:
@@ -390,7 +390,7 @@ class BinaryData(BinaryAccessor):
 
 	def redo_write(self, entry):
 		self.data = self.data[0:entry.offset] + entry.new_contents + self.data[entry.offset + len(entry.new_contents):]
-		for i in xrange(entry.offset, entry.offset + len(entry.new_contents)):
+		for i in range(entry.offset, entry.offset + len(entry.new_contents)):
 			if self.modification[i] == DATA_ORIGINAL:
 				self.modification[i] = DATA_CHANGED
 		for cb in self.callbacks:

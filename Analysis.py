@@ -124,7 +124,7 @@ class X86Instruction:
 				value = instr.operands[j].immediate & ((1 << (instr.operands[j].size * 8)) - 1)
 				numfmt = "0x%%.%dx" % (instr.operands[j].size * 2)
 				string = numfmt % value
-				if (instr.operands[j].size == self.addr_size) and (block.analysis.functions.has_key(value)):
+				if (instr.operands[j].size == self.addr_size) and (value in block.analysis.functions):
 					# Pointer to existing function
 					func = block.analysis.functions[value]
 					string = func.name
@@ -185,7 +185,7 @@ class X86Instruction:
 							result += '+'
 						value = instr.operands[j].immediate
 						string = "0x%.16x" % instr.operands[j].immediate
-						if hasattr(block.exe, "plt") and block.exe.plt.has_key(value):
+						if hasattr(block.exe, "plt") and value in block.exe.plt:
 							# Pointer to PLT entry
 							self.plt = block.exe.plt[value]
 							if len(result) > 0:
@@ -214,7 +214,7 @@ class X86Instruction:
 							result += '+'
 						value = instr.operands[j].immediate & 0xffffffff
 						string = "0x%.8x" % value
-						if (self.addr_size == 4) and hasattr(block.exe, "plt") and block.exe.plt.has_key(value):
+						if (self.addr_size == 4) and hasattr(block.exe, "plt") and value in block.exe.plt:
 							# Pointer to PLT entry
 							self.plt = block.exe.plt[value]
 							if len(result) > 0:
@@ -376,7 +376,7 @@ class PPCInstruction:
 					string = "-0x%x" % -instr.operands[j]
 				else:
 					string = "0x%x" % instr.operands[j]
-				if block.analysis.functions.has_key(value):
+				if value in block.analysis.functions:
 					# Pointer to existing function
 					func = block.analysis.functions[value]
 					string = func.name
@@ -578,7 +578,7 @@ class ArmInstruction:
 							string = "-0x%x" % -instr.operands[j].components[k]
 						else:
 							string = "0x%x" % instr.operands[j].components[k]
-						if block.analysis.functions.has_key(value):
+						if value in block.analysis.functions:
 							# Pointer to existing function
 							func = block.analysis.functions[value]
 							string = func.name
@@ -615,7 +615,7 @@ class ArmInstruction:
 					string = "-0x%x" % -instr.operands[j]
 				else:
 					string = "0x%x" % instr.operands[j]
-				if block.analysis.functions.has_key(value):
+				if value in block.analysis.functions:
 					# Pointer to existing function
 					func = block.analysis.functions[value]
 					string = func.name
@@ -658,7 +658,7 @@ class ArmInstruction:
 				result += " ; ="
 				value = block.exe.read_uint32(addr)
 				string = "0x%x" % value
-				if block.analysis.functions.has_key(value):
+				if value in block.analysis.functions:
 					# Pointer to existing function
 					func = block.analysis.functions[value]
 					string = func.name
@@ -901,9 +901,9 @@ class Function:
 						queue += [block]
 
 		# Set previous block list for each block
-		for block in self.blocks.values():
+		for block in list(self.blocks.values()):
 			block.prev = []
-		for block in self.blocks.values():
+		for block in list(self.blocks.values()):
 			for exit in block.exits:
 				self.blocks[exit].prev.append(block)
 
@@ -915,7 +915,7 @@ class Function:
 
 	def findCalls(self):
 		calls = []
-		for block in self.blocks.values():
+		for block in list(self.blocks.values()):
 			for instr in block.instrs:
 				if instr.isCall() and (instr.target != None):
 					if (instr.target >= self.exe.start()) and (instr.target < self.exe.end()):
@@ -924,7 +924,7 @@ class Function:
 
 	def update(self):
 		changed = False
-		for block in self.blocks.values():
+		for block in list(self.blocks.values()):
 			if block.update():
 				changed = True
 		if changed:
@@ -984,7 +984,7 @@ class Analysis:
 				calls = func.findCalls()
 
 				for call in calls:
-					already_found = self.functions.has_key(call)
+					already_found = call in self.functions
 					for i in self.queue:
 						if i == call:
 							already_found = True
@@ -999,7 +999,7 @@ class Analysis:
 
 			# Update disassembly so that function names are correct
 			self.update_request = False
-			for func in self.functions.values():
+			for func in list(self.functions.values()):
 				if not self.run:
 					break
 				self.lock.acquire()
@@ -1019,8 +1019,8 @@ class Analysis:
 	def find_instr(self, addr, exact_match = False):
 		self.lock.acquire()
 
-		for func in self.functions.values():
-			for block in func.blocks.values():
+		for func in list(self.functions.values()):
+			for block in list(func.blocks.values()):
 				for instr in block.instrs:
 					if (exact_match and (addr == instr.addr)) or ((not exact_match) and (addr >= instr.addr) and (addr < (instr.addr + len(instr.opcode)))):
 						result = [func.entry, instr.addr]
@@ -1037,9 +1037,9 @@ class Analysis:
 		start = ofs
 		end = ofs + len(contents)
 
-		for func in self.functions.values():
+		for func in list(self.functions.values()):
 			added = False
-			for block in func.blocks.values():
+			for block in list(func.blocks.values()):
 				for instr in block.instrs:
 					if (end > instr.addr) and (start < (instr.addr + len(instr.opcode))):
 						if func.entry not in self.queue:

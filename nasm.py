@@ -54,7 +54,7 @@ def assemble(buff, includes='.', *args, **kwargs):
 	for item in args:
 		define_args.append("-d"+str(item))
 
-	for k, v in kwargs.iteritems():
+	for k, v in kwargs.items():
 		k = str(k).upper()
 		define_args.append("-D %s=%s" % (k, str(v)))
 	

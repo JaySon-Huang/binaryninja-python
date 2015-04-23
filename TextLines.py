@@ -53,7 +53,7 @@ class Highlight:
 		string_char = None
 		backslash = False
 		offset = 0
-		for i in xrange(0, len(text)):
+		for i in range(0, len(text)):
 			ch = text[i]
 			if string_char:
 				if backslash:
@@ -137,7 +137,7 @@ class TextLine:
 	def offset_to_col(self, offset):
 		if len(self.offset_map) == 0:
 			return offset
-		for i in xrange(0, len(self.offset_map)):
+		for i in range(0, len(self.offset_map)):
 			if self.offset_map[i][0] > offset:
 				if i == 0:
 					return offset
@@ -149,7 +149,7 @@ class TextLine:
 			if col > self.length:
 				return self.length
 			return col
-		for i in xrange(0, len(self.offset_map)):
+		for i in range(0, len(self.offset_map)):
 			if self.offset_map[i][1] > col:
 				if i == 0:
 					if col > self.length:
@@ -173,7 +173,7 @@ class TextLine:
 		contents = self.read(data)
 		width = 0
 		self.offset_map = []
-		for i in xrange(0, len(contents)):
+		for i in range(0, len(contents)):
 			if contents[i] == '\t':
 				width += tab_width - (width % tab_width)
 				self.offset_map.append((i + 1, width))
@@ -184,7 +184,7 @@ class TextLine:
 	def leading_tab_width(self, data, tab_width):
 		contents = self.read(data)
 		width = 0
-		for i in xrange(0, len(contents)):
+		for i in range(0, len(contents)):
 			if contents[i] == '\t':
 				width += tab_width
 			else:
@@ -194,7 +194,7 @@ class TextLine:
 	def leading_whitespace_width(self, data, tab_width):
 		contents = self.read(data)
 		width = 0
-		for i in xrange(0, len(contents)):
+		for i in range(0, len(contents)):
 			if contents[i] == '\t':
 				width += tab_width - (width % tab_width)
 			elif contents[i] == ' ':
@@ -272,7 +272,7 @@ class TextLines:
 		# Determine what type of newline should be used for this file
 		self.default_newline = '\n'
 		default_newline_count = newline_count['\n']
-		for newline in newline_count.keys():
+		for newline in list(newline_count.keys()):
 			if newline_count[newline] > default_newline_count:
 				self.default_newline = newline
 				default_newline_count = newline_count[newline]
@@ -345,7 +345,7 @@ class TextLines:
 		return len(self.lines) - 1
 
 	def rebase_lines(self, first, diff):
-		for i in xrange(first, len(self.lines)):
+		for i in range(first, len(self.lines)):
 			self.lines[i].offset += diff
 
 	def rebase_lines_absolute(self, first, offset):
@@ -465,13 +465,14 @@ class TextLines:
 
 	def notify_data_write(self, data, offset, contents):
 		# Handle a write by simulating a delete then an insert
+		contents = contents.decode('utf-8')
 		old_line_count = len(self.lines)
 		self.handle_delete(offset, len(contents))
 		first_line, line = self.handle_insert(offset, contents)
 
 		# Update width and offsets for affected lines
 		lines_affected = (len(self.lines) - old_line_count) + 1
-		for i in xrange(first_line, first_line + lines_affected):
+		for i in range(first_line, first_line + lines_affected):
 			self.lines[i].recompute(self.data, self.tab_width)
 
 		# Notify callbacks about any inserted or removed lines 
@@ -494,12 +495,13 @@ class TextLines:
 		self.update_max_width()
 
 	def notify_data_insert(self, data, offset, contents):
+		contents = contents.decode('utf-8')
 		old_line_count = len(self.lines)
 		first_line, line = self.handle_insert(offset, contents)
 
 		# Update width and offsets for affected lines
 		lines_affected = (len(self.lines) - old_line_count) + 1
-		for i in xrange(first_line, first_line + lines_affected):
+		for i in range(first_line, first_line + lines_affected):
 			self.lines[i].recompute(self.data, self.tab_width)
 
 		# Notify callbacks about any inserted lines 

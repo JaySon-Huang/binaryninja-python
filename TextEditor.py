@@ -15,8 +15,9 @@
 
 import sys
 import os
-from PySide.QtCore import *
-from PySide.QtGui import *
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
 from Fonts import *
 from View import *
 from BinaryData import *
@@ -41,7 +42,7 @@ class TextEditorHistoryEntry:
 
 
 class TextEditor(QAbstractScrollArea):
-	statusUpdated = Signal(QWidget, name="statusUpdated")
+	statusUpdated = pyqtSignal(QWidget, name="statusUpdated")
 
 	def __init__(self, data, filename, view, parent):
 		super(TextEditor, self).__init__(parent)
@@ -217,8 +218,8 @@ class TextEditor(QAbstractScrollArea):
 		# Compute range that needs to be updated
 		topY = event.rect().y()
 		botY = topY + event.rect().height()
-		topY = (topY - 2) / self.charHeight
-		botY = ((botY - 2) / self.charHeight) + 1
+		topY = int((topY - 2) / self.charHeight)
+		botY = int((botY - 2) / self.charHeight) + 1
 
 		# Compute selection range
 		selection = False
@@ -301,7 +302,7 @@ class TextEditor(QAbstractScrollArea):
 			col = 0
 
 			# Paint line
-			for i in xrange(0, len(bytes)):
+			for i in range(0, len(bytes)):
 				char_style = HIGHLIGHT_NONE
 				for token in tokens:
 					if (i >= token.start) and (i < (token.start + token.length)):
@@ -358,7 +359,7 @@ class TextEditor(QAbstractScrollArea):
 					# Null bytes will terminate the string when attempting to render, replace with a space
 					cur_token += ' '
 				else:
-					cur_token += bytes[i]
+					cur_token += chr(bytes[i])
 
 			if len(cur_token) != 0:
 				if col < xofs:
@@ -620,8 +621,8 @@ class TextEditor(QAbstractScrollArea):
 			else:
 				tabs = int(leading_tab_width / self.text.tab_width)
 
-			indent = '\t' * tabs
-			indent += ' ' * ((self.cursorCol - rightmost_col) - (tabs * self.text.tab_width))
+			indent = b'\t' * tabs
+			indent += b' ' * ((self.cursorCol - rightmost_col) - (tabs * self.text.tab_width))
 
 			ofs = self.data.start() + self.text.lines[self.cursorY].offset + self.cursorX
 			self.data.insert(ofs, indent)
@@ -629,7 +630,7 @@ class TextEditor(QAbstractScrollArea):
 			self.cursorCol = self.text.lines[self.cursorY].offset_to_col(self.cursorX)
 
 		ofs = self.data.start() + self.text.lines[self.cursorY].offset + self.cursorX
-		self.data.insert(ofs, value)
+		self.data.insert(ofs, bytes(value, 'utf-8'))
 
 		self.cursorX += len(value)
 		self.cursorCol = self.text.lines[self.cursorY].offset_to_col(self.cursorX)
@@ -647,9 +648,9 @@ class TextEditor(QAbstractScrollArea):
 			self.cursorY = self.text.offset_to_line(selStart)
 			self.cursorX = selStart - self.text.lines[self.cursorY].offset
 			self.cursorCol = self.text.lines[self.cursorY].offset_to_col(self.cursorX)
-
+		
 		ofs = self.data.start() + self.text.lines[self.cursorY].offset + self.cursorX
-		self.data.insert(ofs, self.text.default_newline)
+		self.data.insert(ofs, bytes(self.text.default_newline, 'utf-8'))
 
 		self.cursorY += 1
 		self.cursorX = 0
@@ -674,7 +675,7 @@ class TextEditor(QAbstractScrollArea):
 			endY -= 1
 
 		self.view.begin_undo()
-		for i in xrange(startY, endY + 1):
+		for i in range(startY, endY + 1):
 			self.data.insert(self.text.lines[i].offset, '\t')
 		self.cursorCol = self.text.lines[self.cursorY].offset_to_col(self.cursorX)
 		self.view.commit_undo()
@@ -689,7 +690,7 @@ class TextEditor(QAbstractScrollArea):
 
 		self.view.begin_undo()
 
-		for i in xrange(startY, endY + 1):
+		for i in range(startY, endY + 1):
 			ch = self.data.read(self.text.lines[i].offset, 1)
 			if ch == '\t':
 				self.data.remove(self.text.lines[i].offset, 1)
@@ -990,7 +991,8 @@ class TextEditor(QAbstractScrollArea):
 		elif (event.key() == Qt.Key_A) and (event.modifiers() & Qt.ControlModifier):
 			self.selectAll()
 		elif (len(event.text()) == 1) and ((event.text() >= ' ') and (event.text() <= '~')) or (event.text() == '\t'):
-			self.input_text(bytes(event.text()))
+			self.input_text(event.text())
+
 
 		self.repositionCaret()
 		if self.selectionVisible or event.modifiers() & Qt.ShiftModifier:

@@ -14,8 +14,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import struct
-from PySide.QtCore import *
-from PySide.QtGui import *
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
 from Crypto.Hash import MD2
 from Crypto.Hash import MD4
 from Crypto.Hash import MD5
@@ -64,7 +64,7 @@ def hex_dump_decode(data):
 
 def encode_utf16_string(data, char_escape):
 	if len(data) % 2:
-		raise ValueError, "Odd number of bytes"
+		raise ValueError("Odd number of bytes")
 	result = ""
 	for i in range(0, len(data), 2):
 		value = struct.unpack("<H", data[i:i+2])[0]
@@ -95,7 +95,7 @@ def decode_url(data):
 	while i < len(data):
 		if data[i] == '%':
 			if data[i + 1] == 'u':
-				result += unichr(int(data[i+2:i+6], 16)).encode("utf8")
+				result += chr(int(data[i+2:i+6], 16)).encode("utf8")
 				i += 6
 			else:
 				result += chr(int(data[i+1:i+3], 16))
@@ -107,7 +107,7 @@ def decode_url(data):
 
 def encode_c_array(data, element_size, element_struct, type_name, postfix):
 	if len(data) % element_size:
-		raise ValueError, "Data length is not a multiple of the element size"
+		raise ValueError("Data length is not a multiple of the element size")
 
 	fmt = "0x%%.%dx%s" % (element_size * 2, postfix)
 	result = "{\n"

@@ -18,7 +18,7 @@
 # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 # IN THE SOFTWARE.
 
-Registers = ["r%d" % i for i in xrange(0, 13)] + ["sp", "lr", "pc"]
+Registers = ["r%d" % i for i in range(0, 13)] + ["sp", "lr", "pc"]
 
 ConditionalSuffix = [".eq", ".ne", ".cs", ".cc", ".mi", ".pl", ".vs", ".vc", ".hi", ".ls", ".ge", ".lt", ".gt", ".le", "", ""]
 
@@ -710,7 +710,7 @@ def arm_branch_instr(instr, opcode, addr):
 			instr.operands = [Registers[rn] + "!"]
 		else:
 			instr.operands = [Registers[rn]]
-		for i in xrange(0, 16):
+		for i in range(0, 16):
 			if opcode & (1 << i):
 				instr.operands.append(Registers[i])
 	else:
@@ -727,7 +727,7 @@ def arm_branch_instr(instr, opcode, addr):
 			instr.operands = [Registers[rn] + "!"]
 		else:
 			instr.operands = [Registers[rn]]
-		for i in xrange(0, 16):
+		for i in range(0, 16):
 			if opcode & (1 << i):
 				instr.operands.append(Registers[i])
 
@@ -868,7 +868,7 @@ def thumb_16_misc(instr, opcode, addr):
 	elif (op & 0b1110000) == 0b0100000:
 		instr.operation = "push"
 		instr.operands = []
-		for i in xrange(0, 8):
+		for i in range(0, 8):
 			if opcode & (1 << i):
 				instr.operands.append(Registers[i])
 		if opcode & (1 << 8):
@@ -889,7 +889,7 @@ def thumb_16_misc(instr, opcode, addr):
 	elif (op & 0b1110000) == 0b1100000:
 		instr.operation = "pop"
 		instr.operands = []
-		for i in xrange(0, 8):
+		for i in range(0, 8):
 			if opcode & (1 << i):
 				instr.operands.append(Registers[i])
 		if opcode & (1 << 8):
@@ -953,7 +953,7 @@ def thumb_16(instr, opcode, addr):
 	elif (op & 0b111110) == 0b110000:
 		instr.operation = "stmia"
 		instr.operands = [Registers[(opcode >> 8) & 7] + "!"]
-		for i in xrange(0, 8):
+		for i in range(0, 8):
 			if opcode & (1 << i):
 				instr.operands.append(Registers[i])
 	elif (op & 0b111110) == 0b110010:
@@ -962,7 +962,7 @@ def thumb_16(instr, opcode, addr):
 			instr.operands = [Registers[(opcode >> 8) & 7]]
 		else:
 			instr.operands = [Registers[(opcode >> 8) & 7] + "!"]
-		for i in xrange(0, 8):
+		for i in range(0, 8):
 			if opcode & (1 << i):
 				instr.operands.append(Registers[i])
 	elif (op & 0b111100) == 0b110100:
@@ -1048,7 +1048,7 @@ def disassemble(opcode, addr):
 			arm_supervisor_instr(instr, opcode)
 
 		# Convert [pc, imm] to final destination
-		for i in xrange(0, len(instr.operands)):
+		for i in range(0, len(instr.operands)):
 			if instr.operands[i].__class__ == MemoryOperand:
 				if (len(instr.operands[i].components) == 2) and (instr.operands[i].components[0] == "pc") and (type(instr.operands[i].components[1]) != str) and (type(instr.operands[i].components[1]) != list):
 					instr.operands[i].components = [(addr + 8 + instr.operands[i].components[1]) & 0xffffffff]

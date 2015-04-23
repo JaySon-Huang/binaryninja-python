@@ -70,7 +70,7 @@ class MachOFile(BinaryAccessor):
 			self.segments = []
 			self.sections = []
 			offset = self.header.getSize()
-			for i in xrange(0, self.header.cmds):
+			for i in range(0, self.header.cmds):
 				cmd = self.commands[i]
 				cmd.seek(offset)
 				if self.big_endian:
@@ -105,7 +105,7 @@ class MachOFile(BinaryAccessor):
 						self.segments.append(cmd)
 
 					cmd.array(cmd.nsects, "sections")
-					for i in xrange(0, cmd.nsects):
+					for i in range(0, cmd.nsects):
 						section = cmd.sections[i]
 						section.bytes(16, "name")
 						section.bytes(16, "segment")
@@ -131,10 +131,10 @@ class MachOFile(BinaryAccessor):
 							section.uint32_le("reserved2")
 						self.sections.append(section)
 
-					for i in xrange(0, cmd.nsects):
+					for i in range(0, cmd.nsects):
 						section = cmd.sections[i]
 						section.array(section.nreloc, "relocs")
-						for j in xrange(0, section.nreloc):
+						for j in range(0, section.nreloc):
 							reloc = section.relocs[j]
 							reloc.seek(section.reloff + (j * 8))
 							if self.big_endian:
@@ -168,7 +168,7 @@ class MachOFile(BinaryAccessor):
 						self.segments.append(cmd)
 
 					cmd.array(cmd.nsects, "sections")
-					for i in xrange(0, cmd.nsects):
+					for i in range(0, cmd.nsects):
 						section = cmd.sections[i]
 						section.bytes(16, "name")
 						section.bytes(16, "segment")
@@ -196,10 +196,10 @@ class MachOFile(BinaryAccessor):
 							section.uint32_le("reserved3")
 						self.sections.append(section)
 
-					for i in xrange(0, cmd.nsects):
+					for i in range(0, cmd.nsects):
 						section = cmd.sections[i]
 						section.array(section.nreloc, "relocs")
-						for j in xrange(0, section.nreloc):
+						for j in range(0, section.nreloc):
 							reloc = section.relocs[j]
 							reloc.seek(section.reloff + (j * 8))
 							if self.big_endian:
@@ -226,21 +226,21 @@ class MachOFile(BinaryAccessor):
 					elif self.header.cputype == 18: # PPC32
 						cmd.uint32_be("flavor")
 						cmd.uint32_be("count")
-						for reg in ["srr0", "srr1"] + ["r%d" % i for i in xrange(0, 32)] + ["cr", "xer",
+						for reg in ["srr0", "srr1"] + ["r%d" % i for i in range(0, 32)] + ["cr", "xer",
 							"lr", "ctr", "mq", "vrsave"]:
 							cmd.uint32_be(reg)
 						self.entry_addr = cmd.srr0
 					elif self.header.cputype == 0x01000012: # PPC64
 						cmd.uint32_be("flavor")
 						cmd.uint32_be("count")
-						for reg in ["srr0", "srr1"] + ["r%d" % i for i in xrange(0, 32)] + ["cr", "xer",
+						for reg in ["srr0", "srr1"] + ["r%d" % i for i in range(0, 32)] + ["cr", "xer",
 							"lr", "ctr", "mq", "vrsave"]:
 							cmd.uint64_be(reg)
 						self.entry_addr = cmd.srr0
 					elif self.header.cputype == 12: # ARM
 						cmd.uint32_le("flavor")
 						cmd.uint32_le("count")
-						for reg in ["r%d" % i for i in xrange(0, 13)] + ["sp", "lr", "pc", "cpsr"]:
+						for reg in ["r%d" % i for i in range(0, 13)] + ["sp", "lr", "pc", "cpsr"]:
 							cmd.uint32_le(reg)
 						self.entry_addr = cmd.pc
 				elif cmd.cmd == 2: # SYMTAB
@@ -259,7 +259,7 @@ class MachOFile(BinaryAccessor):
 					strings = self.data.read(cmd.stroff, cmd.strsize)
 
 					sym_offset = cmd.symoff
-					for j in xrange(0, cmd.nsyms):
+					for j in range(0, cmd.nsyms):
 						entry = self.symbol_table[j]
 						entry.seek(sym_offset)
 
@@ -357,7 +357,7 @@ class MachOFile(BinaryAccessor):
 
 			# Add symbols from symbol table
 			if self.symbol_table:
-				for i in xrange(0, len(self.symbol_table)):
+				for i in range(0, len(self.symbol_table)):
 					symbol = self.symbol_table[i]
 
 					# Only use symbols that are within a section

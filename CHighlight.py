@@ -33,6 +33,7 @@ class CHighlight(Highlight):
 		if line.highlight_state.style == HIGHLIGHT_COMMENT:
 			long_comment = True
 
+		text = text.decode('utf-8')
 		if text.find("//") != -1:
 			token = HighlightToken(text.find("//"), len(text) - text.find("//"), HighlightState(HIGHLIGHT_COMMENT))
 			line.tokens.append(token)
@@ -44,7 +45,7 @@ class CHighlight(Highlight):
 			text = text[0:text.find('#')]
 
 		tokens = self.simple_tokenize(text)
-		for i in xrange(0, len(tokens)):
+		for i in range(0, len(tokens)):
 			token = tokens[i]
 			if (token[1] == "/") and (i > 0) and (tokens[i - 1][1] == '*') and (token[0] == (tokens[i - 1][0] + 1)):
 				line.tokens.append(HighlightToken(token[0], len(token[1]), HighlightState(HIGHLIGHT_COMMENT)))

@@ -13,9 +13,9 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from PySide.QtCore import *
-from PySide.QtGui import *
-import thread
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
+import _thread
 import threading
 
 gui_thread = None
@@ -51,7 +51,7 @@ class GuiObjectProxy(object):
 	def __setattr__(self, name, value):
 		run_on_gui_thread(lambda: setattr(object.__getattribute__(self, "_obj"), name, value))
 	
-	def __nonzero__(self):
+	def __bool__(self):
 		return run_on_gui_thread(lambda: bool(object.__getattribute__(self, "_obj")))
 	def __str__(self):
 		return run_on_gui_thread(lambda: str(object.__getattribute__(self, "_obj")))
@@ -115,7 +115,7 @@ class GuiObjectProxy(object):
 
 def is_gui_thread():
 	global gui_thread
-	return thread.get_ident() == gui_thread
+	return _thread.get_ident() == gui_thread
 
 def run_on_gui_thread(code):
 	global main_window
@@ -125,7 +125,7 @@ def run_on_gui_thread(code):
 	QCoreApplication.postEvent(main_window, event)
 	event.event.wait()
 	if event.exception is not None:
-		raise event.exception[0], event.exception[1], event.exception[2]
+		raise event.exception[0](event.exception[1]).with_traceback(event.exception[2])
 	return event.result
 
 def create_file(data):

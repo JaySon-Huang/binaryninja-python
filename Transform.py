@@ -13,8 +13,9 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from PySide.QtCore import *
-from PySide.QtGui import *
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
 from Crypto.Cipher import AES
 from Crypto.Cipher import Blowfish
 from Crypto.Cipher import CAST
@@ -73,7 +74,7 @@ def xor_transform(data, key):
 		return data
 
 	result = ""
-	for i in xrange(0, len(data)):
+	for i in range(0, len(data)):
 		result += chr(ord(data[i]) ^ ord(key[i % len(key)]))
 	return result
 

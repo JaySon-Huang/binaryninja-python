@@ -135,7 +135,7 @@ class PEFile(BinaryAccessor):
 			self.image_base = self.header.opt.image_base
 
 			self.data_dirs = self.header.array(self.header.opt.data_dir_count, "data_dirs")
-			for i in xrange(0, self.header.opt.data_dir_count):
+			for i in range(0, self.header.opt.data_dir_count):
 				self.data_dirs[i].uint32("virtual_address")
 				self.data_dirs[i].uint32("size")
 
@@ -149,7 +149,7 @@ class PEFile(BinaryAccessor):
 			self.sections.append(header_section_obj)
 
 			self.tree.array(self.header.section_count, "sections")
-			for i in xrange(0, self.header.section_count):
+			for i in range(0, self.header.section_count):
 				section = self.tree.sections[i]
 				section.seek(self.mz.pe_offset + self.header.optional_header_size + 24 + (i * 40))
 				section.bytes(8, "name")
@@ -176,7 +176,7 @@ class PEFile(BinaryAccessor):
 
 			if self.header.opt.data_dir_count >= 2:
 				self.imports = self.tree.array(0, "imports")
-				for i in xrange(0, self.data_dirs[1].size / 20):
+				for i in range(0, self.data_dirs[1].size / 20):
 					if self.read(self.image_base + self.data_dirs[1].virtual_address + (i * 20), 4) == "\0\0\0\0":
 						break
 					if self.read(self.image_base + self.data_dirs[1].virtual_address + (i * 20) + 16, 4) == "\0\0\0\0":
@@ -239,21 +239,21 @@ class PEFile(BinaryAccessor):
 				self.exports.uint32("address_of_name_ordinals")
 
 				self.exports.array(self.exports.function_count, "functions")
-				for i in xrange(0, self.exports.function_count):
+				for i in range(0, self.exports.function_count):
 					self.exports.functions[i].seek(self.virtual_address_to_file_offset(self.image_base + self.exports.address_of_functions) + (i * 4))
 					self.exports.functions[i].uint32("address")
 
 				self.exports.array(self.exports.name_count, "names")
-				for i in xrange(0, self.exports.name_count):
+				for i in range(0, self.exports.name_count):
 					self.exports.names[i].seek(self.virtual_address_to_file_offset(self.image_base + self.exports.address_of_names) + (i * 4))
 					self.exports.names[i].uint32("address_of_name")
 
 				self.exports.array(self.exports.name_count, "name_ordinals")
-				for i in xrange(0, self.exports.name_count):
+				for i in range(0, self.exports.name_count):
 					self.exports.name_ordinals[i].seek(self.virtual_address_to_file_offset(self.image_base + self.exports.address_of_name_ordinals) + (i * 2))
 					self.exports.name_ordinals[i].uint16("ordinal")
 
-				for i in xrange(0, self.exports.name_count):
+				for i in range(0, self.exports.name_count):
 					function_index = self.exports.name_ordinals[i].ordinal - self.exports.base
 					address = self.image_base + self.exports.functions[function_index].address
 					name = self.read_string(self.image_base + self.exports.names[i].address_of_name)

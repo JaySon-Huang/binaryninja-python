@@ -14,8 +14,9 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import sys
-from PySide.QtCore import *
-from PySide.QtGui import *
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
 from TerminalProcess import *
 from Fonts import *
 
@@ -213,8 +214,8 @@ class TerminalView(QAbstractScrollArea):
 		yofs = self.verticalScrollBar().value()
 		topY = event.rect().y()
 		botY = topY + event.rect().height()
-		topY = topY / self.charHeight
-		botY = (botY / self.charHeight) + 1
+		topY = int(topY / self.charHeight)
+		botY = int(botY / self.charHeight) + 1
 
 		screen = self.proc.term.screen
 		renditions = self.proc.term.rendition
@@ -248,7 +249,7 @@ class TerminalView(QAbstractScrollArea):
 			back_color = Qt.black
 			fore_color = Qt.white
 
-			for i in xrange(0, self.cols):
+			for i in range(0, self.cols):
 				if i < len(renditionLine):
 					rendition = renditionLine[i]
 				else:
@@ -306,7 +307,7 @@ class TerminalView(QAbstractScrollArea):
 			back_color = Qt.black
 			fore_color = Qt.white
 
-			for i in xrange(0, len(line)):
+			for i in range(0, len(line)):
 				rendition = renditionLine[i]
 
 				if self.caretBlink and self.caretVisible and self.proc.term.cursor_visible and (self.proc.term.cursor_row == y + yofs) and (self.proc.term.cursor_col == i):
@@ -610,8 +611,8 @@ class TerminalView(QAbstractScrollArea):
 				renditions = self.proc.term.rendition[y]
 
 			lastX = 0
-			for i in xrange(self.cols - 1, -1, -1):
-				if (line[i] != u' ') or (renditions[i] & TerminalEmulator.RENDITION_WRITTEN_CHAR):
+			for i in range(self.cols - 1, -1, -1):
+				if (line[i] != ' ') or (renditions[i] & TerminalEmulator.RENDITION_WRITTEN_CHAR):
 					lastX = i + 1
 					break
 
@@ -669,8 +670,8 @@ class TerminalView(QAbstractScrollArea):
 				renditions = self.proc.term.rendition[y]
 
 			lastX = 0
-			for i in xrange(self.cols - 1, -1, -1):
-				if (line[i] != u' ') or (renditions[i] & TerminalEmulator.RENDITION_WRITTEN_CHAR):
+			for i in range(self.cols - 1, -1, -1):
+				if (line[i] != ' ') or (renditions[i] & TerminalEmulator.RENDITION_WRITTEN_CHAR):
 					lastX = i + 1
 					break
 
@@ -732,14 +733,14 @@ class TerminalView(QAbstractScrollArea):
 		# Find bounds of "word", anything outside 7-bit ascii or (a-z,A-Z,0-9,_,.) counts
 		firstX = x
 		lastX = x
-		for i in xrange(x, -1, -1):
+		for i in range(x, -1, -1):
 			ch = line[i]
-			if not (((ch >= u'0') and (ch <= u'9')) or ((ch >= u'a') and (ch <= u'z')) or ((ch >= u'A') and (ch <= u'Z')) or (ch == u'_') or (ch == u'.') or (ord(ch) >= 0x80)):
+			if not (((ch >= '0') and (ch <= '9')) or ((ch >= 'a') and (ch <= 'z')) or ((ch >= 'A') and (ch <= 'Z')) or (ch == '_') or (ch == '.') or (ord(ch) >= 0x80)):
 				break
 			firstX = i
-		for i in xrange(x, self.cols, 1):
+		for i in range(x, self.cols, 1):
 			ch = line[i]
-			if not (((ch >= u'0') and (ch <= u'9')) or ((ch >= u'a') and (ch <= u'z')) or ((ch >= u'A') and (ch <= u'Z')) or (ch == u'_') or (ch == u'.') or (ord(ch) >= 0x80)):
+			if not (((ch >= '0') and (ch <= '9')) or ((ch >= 'a') and (ch <= 'z')) or ((ch >= 'A') and (ch <= 'Z')) or (ch == '_') or (ch == '.') or (ord(ch) >= 0x80)):
 				break
 			lastX = i
 
@@ -836,8 +837,8 @@ class TerminalView(QAbstractScrollArea):
 			startY, endY = endY, startY
 
 		# Construct string for selection
-		data = u""
-		for y in xrange(startY, endY + 1):
+		data = ""
+		for y in range(startY, endY + 1):
 			if (y == startY) and (y == endY):
 				lineStartX = startX
 				lineEndX = endX
@@ -859,17 +860,17 @@ class TerminalView(QAbstractScrollArea):
 				renditions = self.proc.term.rendition[y]
 
 			# Process characters from right to left so that line endings can be detected
-			lineText = u""
+			lineText = ""
 			nonemptyFound = (lineEndX != self.cols)
 			trailingEmpty = 0
-			for x in xrange(lineEndX - 1, lineStartX - 1, -1):
+			for x in range(lineEndX - 1, lineStartX - 1, -1):
 				# Get next character and ignore it if it is a trailing space
 				if x >= len(line):
 					trailingEmpty += 1
 					continue
 				ch = line[x]
 				rendition = renditions[x]
-				if (not nonemptyFound) and (ch == u' ') and ((rendition & TerminalEmulator.RENDITION_WRITTEN_CHAR) == 0):
+				if (not nonemptyFound) and (ch == ' ') and ((rendition & TerminalEmulator.RENDITION_WRITTEN_CHAR) == 0):
 					trailingEmpty += 1
 					continue
 				nonemptyFound = True
@@ -878,7 +879,7 @@ class TerminalView(QAbstractScrollArea):
 
 			# Don't insert a newline if this is the last line, or if text is wrapping to the next line
 			if (y != endY) and ((lineEndX != self.cols) or (trailingEmpty > 0)):
-				lineText += u'\n'
+				lineText += '\n'
 			data += lineText
 
 		# Write text to clipboard

@@ -260,7 +260,7 @@ class Struct:
 
 	def complete(self):
 		for i in self._order:
-			if (not self._start.has_key(i)) or (not self._size.has_key(i)):
+			if (i not in self._start) or (i not in self._size):
 				self.__dict__[i].complete()
 				self._start[i] = self.__dict__[i].getStart()
 				self._size[i] = self.__dict__[i].getSize()

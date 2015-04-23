@@ -41,10 +41,10 @@ class TerminalEmulator:
 
 		self.default_screen_line = array.array('u')
 		self.default_rendition_line = array.array('I')
-		for i in xrange(0, cols):
-			self.default_screen_line.append(u' ')
+		for i in range(0, cols):
+			self.default_screen_line.append(' ')
 			self.default_rendition_line.append(0)
-		for i in xrange(0, rows):
+		for i in range(0, rows):
 			self.screen.append(array.array('u', self.default_screen_line))
 			self.rendition.append(array.array('I', self.default_rendition_line))
 			self.other_screen.append(array.array('u', self.default_screen_line))
@@ -77,7 +77,7 @@ class TerminalEmulator:
 		self.line_draw = False
 		self.utf8_buffer = ""
 		self.utf8_len = 0
-		self.unprocessed_input = u""
+		self.unprocessed_input = ""
 		self.application_cursor_keys = False
 		self.insert_mode = False
 
@@ -86,76 +86,76 @@ class TerminalEmulator:
 		self.response_callback = None
 
 		self.special_chars = {
-			u'\x07': self.bell,
-			u'\x08': self.backspace,
-			u'\x09': self.horizontal_tab,
-			u'\x0a': self.line_feed,
-			u'\x0b': self.line_feed,
-			u'\x0c': self.line_feed,
-			u'\x0d': self.carriage_return
+			'\x07': self.bell,
+			'\x08': self.backspace,
+			'\x09': self.horizontal_tab,
+			'\x0a': self.line_feed,
+			'\x0b': self.line_feed,
+			'\x0c': self.line_feed,
+			'\x0d': self.carriage_return
 		}
 
 		self.escape_sequences = {
-			u'@': self.insert_chars,
-			u'A': self.cursor_up,
-			u'B': self.cursor_down,
-			u'C': self.cursor_right,
-			u'D': self.cursor_left,
-			u'E': self.cursor_next_line,
-			u'F': self.cursor_prev_line,
-			u'G': self.set_cursor_col,
-			u'`': self.set_cursor_col,
-			u'd': self.set_cursor_row,
-			u'H': self.move_cursor,
-			u'f': self.move_cursor,
-			u'I': self.cursor_right_tab,
-			u'J': self.erase_screen,
-			u'?J': self.erase_screen,
-			u'K': self.erase_line,
-			u'?K': self.erase_line,
-			u'r': self.scroll_region,
-			u'L': self.insert_lines,
-			u'P': self.delete_chars,
-			u'M': self.delete_lines,
-			u'S': self.scroll_up_lines,
-			u'T': self.scroll_down_lines,
-			u'X': self.erase_chars,
-			u'Z': self.cursor_left_tab,
-			u'm': self.graphic_rendition,
-			u'h': self.set_option,
-			u'l': self.clear_option,
-			u'?h': self.set_private_option,
-			u'?l': self.clear_private_option,
-			u'c': self.device_attr,
-			u'>c': self.device_secondary_attr,
-			u'n': self.device_status,
-			u'?n': self.device_status,
-			u'!p': self.soft_reset
+			'@': self.insert_chars,
+			'A': self.cursor_up,
+			'B': self.cursor_down,
+			'C': self.cursor_right,
+			'D': self.cursor_left,
+			'E': self.cursor_next_line,
+			'F': self.cursor_prev_line,
+			'G': self.set_cursor_col,
+			'`': self.set_cursor_col,
+			'd': self.set_cursor_row,
+			'H': self.move_cursor,
+			'f': self.move_cursor,
+			'I': self.cursor_right_tab,
+			'J': self.erase_screen,
+			'?J': self.erase_screen,
+			'K': self.erase_line,
+			'?K': self.erase_line,
+			'r': self.scroll_region,
+			'L': self.insert_lines,
+			'P': self.delete_chars,
+			'M': self.delete_lines,
+			'S': self.scroll_up_lines,
+			'T': self.scroll_down_lines,
+			'X': self.erase_chars,
+			'Z': self.cursor_left_tab,
+			'm': self.graphic_rendition,
+			'h': self.set_option,
+			'l': self.clear_option,
+			'?h': self.set_private_option,
+			'?l': self.clear_private_option,
+			'c': self.device_attr,
+			'>c': self.device_secondary_attr,
+			'n': self.device_status,
+			'?n': self.device_status,
+			'!p': self.soft_reset
 		}
 
-		self.charset_escapes = [u' ', u'#', u'%', u'(', u')', u'*', u'+']
+		self.charset_escapes = [' ', '#', '%', '(', ')', '*', '+']
 		self.line_draw_map = {
-			u'j': unicode('\xe2\x94\x98', 'utf8'),
-			u'k': unicode('\xe2\x94\x90', 'utf8'),
-			u'l': unicode('\xe2\x94\x8c', 'utf8'),
-			u'm': unicode('\xe2\x94\x94', 'utf8'),
-			u'n': unicode('\xe2\x94\xbc', 'utf8'),
-			u'q': unicode('\xe2\x94\x80', 'utf8'),
-			u't': unicode('\xe2\x94\x9c', 'utf8'),
-			u'u': unicode('\xe2\x94\xa4', 'utf8'),
-			u'v': unicode('\xe2\x94\xb4', 'utf8'),
-			u'w': unicode('\xe2\x94\xac', 'utf8'),
-			u'x': unicode('\xe2\x94\x82', 'utf8')
+			'j': '\xe2\x94\x98',
+			'k': '\xe2\x94\x90',
+			'l': '\xe2\x94\x8c',
+			'm': '\xe2\x94\x94',
+			'n': '\xe2\x94\xbc',
+			'q': '\xe2\x94\x80',
+			't': '\xe2\x94\x9c',
+			'u': '\xe2\x94\xa4',
+			'v': '\xe2\x94\xb4',
+			'w': '\xe2\x94\xac',
+			'x': '\xe2\x94\x82',
 		}
 
 	def invalidate(self):
-		for i in xrange(0, self.rows):
+		for i in range(0, self.rows):
 			self.dirty.add(i)
 
 	def resize(self, rows, cols):
 		if rows > self.rows:
 			# Adding rows
-			for i in xrange(self.rows, rows):
+			for i in range(self.rows, rows):
 				self.screen.append(array.array('u', self.default_screen_line))
 				self.rendition.append(array.array('I', self.default_rendition_line))
 				self.other_screen.append(array.array('u', self.default_screen_line))
@@ -171,7 +171,7 @@ class TerminalEmulator:
 				else:
 					# Cursor is at bottom, remove lines from top, and place them in the
 					# history buffer
-					for i in xrange(0, (normal_cursor_row + 1) - rows):
+					for i in range(0, (normal_cursor_row + 1) - rows):
 						screen_line = self.other_screen.pop(0)
 						rendition_line = self.other_rendition.pop(0)
 						self.history_screen.append(screen_line)
@@ -190,7 +190,7 @@ class TerminalEmulator:
 				else:
 					# Cursor is at bottom, remove lines from top, and place them in the
 					# history buffer
-					for i in xrange(0, (normal_cursor_row + 1) - rows):
+					for i in range(0, (normal_cursor_row + 1) - rows):
 						screen_line = self.screen.pop(0)
 						rendition_line = self.rendition.pop(0)
 						self.history_screen.append(screen_line)
@@ -202,18 +202,18 @@ class TerminalEmulator:
 
 		if cols > self.cols:
 			# Adding columns
-			for i in xrange(0, rows):
-				for j in xrange(self.cols, cols):
-					self.screen[i].append(u' ')
+			for i in range(0, rows):
+				for j in range(self.cols, cols):
+					self.screen[i].append(' ')
 					self.rendition[i].append(0)
-					self.other_screen[i].append(u' ')
+					self.other_screen[i].append(' ')
 					self.other_rendition[i].append(0)
-			for j in xrange(self.cols, cols):
-				self.default_screen_line.append(u' ')
+			for j in range(self.cols, cols):
+				self.default_screen_line.append(' ')
 				self.default_rendition_line.append(0)
 		elif cols < self.cols:
 			# Removing columns
-			for i in xrange(0, rows):
+			for i in range(0, rows):
 				self.screen[i] = self.screen[i][0:cols]
 				self.rendition[i] = self.rendition[i][0:cols]
 				self.other_screen[i] = self.other_screen[i][0:cols]
@@ -280,7 +280,7 @@ class TerminalEmulator:
 			top_screen[0:self.cols] = self.default_screen_line
 			top_rendition[0:self.cols] = self.default_rendition_line
 		if self.active_rendition != 0:
-			for i in xrange(0, self.cols):
+			for i in range(0, self.cols):
 				top_rendition[i] = self.active_rendition
 		self.screen.insert(self.scroll_bottom, top_screen)
 		self.rendition.insert(self.scroll_bottom, top_rendition)
@@ -326,18 +326,18 @@ class TerminalEmulator:
 		self.cursor_col += 1
 
 	def erase_rect(self, top_row, left_col, bot_row, right_col):
-		for row in xrange(top_row, bot_row):
+		for row in range(top_row, bot_row):
 			if row < 0:
 				continue
 			if row >= self.rows:
 				break
 
-			for col in xrange(left_col, right_col):
+			for col in range(left_col, right_col):
 				if col < 0:
 					continue
 				if col >= self.cols:
 					break
-				self.screen[row][col] = u' '
+				self.screen[row][col] = ' '
 				self.rendition[row][col] = self.active_rendition
 
 			self.dirty.add(row)
@@ -427,7 +427,7 @@ class TerminalEmulator:
 			count = 1
 		if count > self.cols:
 			count = self.cols
-		for i in xrange(0, count):
+		for i in range(0, count):
 			if (self.cursor_col % self.tab_width) == 0:
 				self.cursor_col -= self.tab_width
 			else:
@@ -441,7 +441,7 @@ class TerminalEmulator:
 			count = 1
 		if count > self.cols:
 			count = self.cols
-		for i in xrange(0, count):
+		for i in range(0, count):
 			self.cursor_col += self.tab_width - (self.cursor_col % self.tab_width)
 			if self.cursor_col > self.cols:
 				self.cursor_col = self.cols
@@ -495,14 +495,14 @@ class TerminalEmulator:
 
 		erased_screen = []
 		erased_rendition = []
-		for i in xrange(0, count):
+		for i in range(0, count):
 			erased_screen.append(self.screen.pop((self.scroll_bottom + 1) - count))
 			erased_rendition.append(self.rendition.pop((self.scroll_bottom + 1) - count))
-			for j in xrange(0, self.cols):
-				erased_screen[i][j] = u' '
+			for j in range(0, self.cols):
+				erased_screen[i][j] = ' '
 				erased_rendition[i][j] = self.active_rendition
 
-		for i in xrange(0, count):
+		for i in range(0, count):
 			self.screen.insert(self.cursor_row, erased_screen[i])
 			self.rendition.insert(self.cursor_row, erased_rendition[i])
 
@@ -523,14 +523,14 @@ class TerminalEmulator:
 
 		erased_screen = []
 		erased_rendition = []
-		for i in xrange(0, count):
+		for i in range(0, count):
 			erased_screen.append(self.screen.pop(self.cursor_row))
 			erased_rendition.append(self.rendition.pop(self.cursor_row))
-			for j in xrange(0, self.cols):
-				erased_screen[i][j] = u' '
+			for j in range(0, self.cols):
+				erased_screen[i][j] = ' '
 				erased_rendition[i][j] = self.active_rendition
 
-		for i in xrange(0, count):
+		for i in range(0, count):
 			self.screen.insert((self.scroll_bottom + 1) - count, erased_screen[i])
 			self.rendition.insert((self.scroll_bottom + 1) - count, erased_rendition[i])
 
@@ -548,14 +548,14 @@ class TerminalEmulator:
 
 		erased_screen = []
 		erased_rendition = []
-		for i in xrange(0, count):
+		for i in range(0, count):
 			erased_screen.append(self.screen.pop(self.scroll_top))
 			erased_rendition.append(self.rendition.pop(self.scroll_top))
-			for j in xrange(0, self.cols):
-				erased_screen[i][j] = u' '
+			for j in range(0, self.cols):
+				erased_screen[i][j] = ' '
 				erased_rendition[i][j] = self.active_rendition
 
-		for i in xrange(0, count):
+		for i in range(0, count):
 			self.screen.insert((self.scroll_bottom + 1) - count, erased_screen[i])
 			self.rendition.insert((self.scroll_bottom + 1) - count, erased_rendition[i])
 
@@ -573,14 +573,14 @@ class TerminalEmulator:
 
 		erased_screen = []
 		erased_rendition = []
-		for i in xrange(0, count):
+		for i in range(0, count):
 			erased_screen.append(self.screen.pop((self.scroll_bottom + 1) - count))
 			erased_rendition.append(self.rendition.pop((self.scroll_bottom + 1) - count))
-			for j in xrange(0, self.cols):
-				erased_screen[i][j] = u' '
+			for j in range(0, self.cols):
+				erased_screen[i][j] = ' '
 				erased_rendition[i][j] = self.active_rendition
 
-		for i in xrange(0, count):
+		for i in range(0, count):
 			self.screen.insert(self.scroll_top, erased_screen[i])
 			self.rendition.insert(self.scroll_top, erased_rendition[i])
 
@@ -592,7 +592,7 @@ class TerminalEmulator:
 			count = 1
 		if count > (self.cols - self.cursor_col):
 			count = self.cols - self.cursor_col
-		for i in xrange(self.cols - 1, self.cursor_col + count - 1, -1):
+		for i in range(self.cols - 1, self.cursor_col + count - 1, -1):
 			self.screen[self.cursor_row][i] = self.screen[self.cursor_row][i - count]
 			self.rendition[self.cursor_row][i] = self.rendition[self.cursor_row][i - count]
 		self.erase_rect(self.cursor_row, self.cursor_col, self.cursor_row + 1, self.cursor_col + count)
@@ -604,7 +604,7 @@ class TerminalEmulator:
 			count = 1
 		if count > (self.cols - self.cursor_col):
 			count = self.cols - self.cursor_col
-		for i in xrange(self.cursor_col, self.cols - count):
+		for i in range(self.cursor_col, self.cols - count):
 			self.screen[self.cursor_row][i] = self.screen[self.cursor_row][i + count]
 			self.rendition[self.cursor_row][i] = self.rendition[self.cursor_row][i + count]
 		self.erase_rect(self.cursor_row, self.cols - count, self.cursor_row + 1, self.cols)
@@ -667,7 +667,7 @@ class TerminalEmulator:
 				self.active_rendition &= ~(0xff000000 | TerminalEmulator.RENDITION_BACKGROUND_256)
 				self.active_rendition |= (val - 91) << 16
 			else:
-				print "Unsupported graphic rendition %d" % val
+				print("Unsupported graphic rendition %d" % val)
 
 			i += 1
 
@@ -738,17 +738,17 @@ class TerminalEmulator:
 			result = []
 		else:
 			try:
-				result = [int(i) for i in params.split(u';')]
+				result = [int(i) for i in params.split(';')]
 			except ValueError:
-				print "Invalid parameters '%s'" % params
+				print("Invalid parameters '%s'" % params)
 				return []
 		return result
 
 	def process_escape(self, sequence):
-		if (sequence == u'=') or (sequence == u'>'):
+		if (sequence == '=') or (sequence == '>'):
 			# Numpad handling, just ignore it
 			return
-		if sequence == u'c':
+		if sequence == 'c':
 			# Terminal reset
 			self.active_rendition = 0
 			self.erase_rect(0, 0, self.rows, self.cols)
@@ -758,40 +758,40 @@ class TerminalEmulator:
 			self.saved_cursor_col = 0
 			self.invalidate()
 			return
-		if sequence == u'7':
+		if sequence == '7':
 			# Save cursor
 			self.saved_cursor_row = self.cursor_row
 			self.saved_cursor_col = self.cursor_col
 			return
-		if sequence == u'8':
+		if sequence == '8':
 			# Restore cursor
 			self.cursor_row = self.saved_cursor_row
 			self.cursor_col = self.saved_cursor_col
 			return
-		if sequence == u'D':
+		if sequence == 'D':
 			self.line_feed()
 			return
-		if sequence == u'E':
+		if sequence == 'E':
 			self.newline()
 			return
-		if sequence == u'M':
+		if sequence == 'M':
 			self.reverse_line_feed()
 			return
-		if sequence[0] != u'[':
-			print "Unhandled escape sequence '%s'" % sequence
+		if sequence[0] != '[':
+			print("Unhandled escape sequence '%s'" % sequence)
 			return
 
 		params = sequence[1:-1]
 		mode = sequence[-1]
 
-		if (len(params) > 0) and (params[0] == u'?'):
-			mode = u'?' + mode
+		if (len(params) > 0) and (params[0] == '?'):
+			mode = '?' + mode
 			params = params[1:]
-		if (len(params) > 0) and (params[0] == u'>'):
-			mode = u'>' + mode
+		if (len(params) > 0) and (params[0] == '>'):
+			mode = '>' + mode
 			params = params[1:]
-		if (len(params) > 0) and (params[0] == u'!'):
-			mode = u'!' + mode
+		if (len(params) > 0) and (params[0] == '!'):
+			mode = '!' + mode
 			params = params[1:]
 
 		params = self.parse_params(params)
@@ -801,7 +801,7 @@ class TerminalEmulator:
 		if mode in self.escape_sequences:
 			self.escape_sequences[mode](params)
 		else:
-			print "Unhandled escape sequence '%s'" % sequence
+			print("Unhandled escape sequence '%s'" % sequence)
 
 	def start_window_title(self, sequence):
 		params = self.parse_params(sequence[1:-1])
@@ -816,10 +816,10 @@ class TerminalEmulator:
 		for raw_ch in data:
 			if self.utf8_len == 0:
 				if ord(raw_ch) < 128:
-					ch = unicode(raw_ch)
+					ch = str(raw_ch)
 				elif ord(raw_ch) < 0xc0:
 					# Unexpected continuation character
-					ch = unichr(ord(raw_ch))
+					ch = chr(ord(raw_ch))
 				elif ord(raw_ch) < 0xe0:
 					self.utf8_buffer = raw_ch
 					self.utf8_len = 1
@@ -837,17 +837,17 @@ class TerminalEmulator:
 					self.utf8_len = 5
 				else:
 					# Invalid first byte
-					ch = unichr(ord(raw_ch))
+					ch = chr(ord(raw_ch))
 			else:
 				if (ord(raw_ch) & 0xc0) != 0x80:
 					# Invalid continuation character
-					ch = unichr(ord(raw_ch))
+					ch = chr(ord(raw_ch))
 					self.utf8_len = 0
 				else:
 					self.utf8_buffer += raw_ch
 					self.utf8_len -= 1
 					if self.utf8_len == 0:
-						ch = unicode(self.utf8_buffer, 'utf8', 'replace')
+						ch = str(self.utf8_buffer, 'utf8', 'replace')
 
 			if self.utf8_len > 0:
 				continue
@@ -865,13 +865,13 @@ class TerminalEmulator:
 						continue
 			except TypeError:
 				# Invalid character
-				ch = u' '
+				ch = ' '
 
 			if self.window_title_mode:
-				if ch == u'\007': # Bell character ends window title
+				if ch == '\007': # Bell character ends window title
 					if self.title_callback and not self.ignored_window_title:
 						self.title_callback(self.unprocessed_input)
-					self.unprocessed_input = u""
+					self.unprocessed_input = ""
 					self.window_title_mode = False
 				else:
 					self.unprocessed_input += ch
@@ -880,10 +880,10 @@ class TerminalEmulator:
 			elif self.escape_mode:
 				self.unprocessed_input += ch
 				if len(self.unprocessed_input) == 1:
-					if (ch != u'[') and (ch != u']') and (ch not in self.charset_escapes):
+					if (ch != '[') and (ch != ']') and (ch not in self.charset_escapes):
 						# Special type of escape sequence, no parameters
 						self.process_escape(self.unprocessed_input)
-						self.unprocessed_input = u""
+						self.unprocessed_input = ""
 						self.escape_mode = False
 				elif (len(self.unprocessed_input) == 2) and (self.unprocessed_input[0] in self.charset_escapes):
 					if self.unprocessed_input == "(0":
@@ -892,22 +892,22 @@ class TerminalEmulator:
 					else:
 						# Other character set escape, just use UTF8
 						self.line_draw = False
-					self.unprocessed_input = u""
+					self.unprocessed_input = ""
 					self.escape_mode = False
-				elif (ch >= u'@') and (ch <= u'~'):
+				elif (ch >= '@') and (ch <= '~'):
 					# Ending character found, process sequence
 					self.process_escape(self.unprocessed_input)
-					self.unprocessed_input = u""
+					self.unprocessed_input = ""
 					self.escape_mode = False
 				else:
 					# Parameter character, add to pending string
-					if self.unprocessed_input.startswith(u']') and (ch == u';'):
+					if self.unprocessed_input.startswith(']') and (ch == ';'):
 						# Setting window title, wait for bell character to finish
 						self.start_window_title(self.unprocessed_input)
-						self.unprocessed_input = u""
+						self.unprocessed_input = ""
 						self.escape_mode = False
 						self.window_title_mode = True
-			elif ch == u'\033':
+			elif ch == '\033':
 				self.escape()
 			else:
 				self.write_char(ch)

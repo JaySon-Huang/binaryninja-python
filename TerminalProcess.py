@@ -53,7 +53,7 @@ class TerminalUpdateThread(threading.Thread):
 class TerminalProcess:
 	def __init__(self, cmd, raw_debug = None):
 		if os.name == "nt":
-			raise RuntimeError, "Windows does not support pseudo-terminal devices"
+			raise RuntimeError("Windows does not support pseudo-terminal devices")
 
 		if cmd:
 			# Spawn the new process in a new PTY
@@ -135,7 +135,7 @@ class TerminalProcess:
 				except:
 					data = ""
 				if len(data) > 0:
-					ready_data += data
+					ready_data += data.decode('utf-8')
 					timeout = end_time - time.time()
 					if timeout > 0:
 						continue

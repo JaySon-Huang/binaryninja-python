@@ -28,13 +28,14 @@ class PythonHighlight(Highlight):
 		self.definitions = ["class", "def", "import", "from"]
 
 	def update_line(self, line, text):
+		text = text.decode('utf-8')
 		if text.find('#') != -1:
 			token = HighlightToken(text.find('#'), len(text) - text.find('#'), HighlightState(HIGHLIGHT_COMMENT))
 			line.tokens.append(token)
 			text = text[0:text.find('#')]
 
 		tokens = self.simple_tokenize(text)
-		for i in xrange(0, len(tokens)):
+		for i in range(0, len(tokens)):
 			token = tokens[i]
 			if token[1] in self.keywords:
 				line.tokens.append(HighlightToken(token[0], len(token[1]), HighlightState(HIGHLIGHT_KEYWORD)))

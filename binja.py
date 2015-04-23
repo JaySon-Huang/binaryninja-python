@@ -16,15 +16,15 @@
 
 import sys
 import os
-import httplib
+import http.client
 import hashlib
 import base64
 import zlib
 import stat
-import thread
+import _thread
 import Threads
-from PySide.QtCore import *
-from PySide.QtGui import *
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
 from View import *
 from BinaryData import *
 from HexEditor import *
@@ -108,7 +108,7 @@ class MainWindow(QMainWindow):
 		self.setWindowTitle("Binary Ninja")
 
 		action_table = {}
-		highlightNames = highlightTypes.keys()
+		highlightNames = list(highlightTypes.keys())
 		highlightNames.sort()
 
 		self.fileMenu = QMenu("&File", self)
@@ -210,7 +210,7 @@ class MainWindow(QMainWindow):
 		self.helpMenu.addAction("&Python console API", self.python_console_api)
 		self.menuBar().addMenu(self.helpMenu)
 
-		for action in action_table.keys():
+		for action in list(action_table.keys()):
 			action.triggered.connect(action_table[action])
 
 		self.viewLabel = QLabel("View:")
@@ -277,7 +277,7 @@ class MainWindow(QMainWindow):
 
 		bad_files = []
 		end_of_options = False
-		for i in xrange(1, len(sys.argv)):
+		for i in range(1, len(sys.argv)):
 			if not end_of_options:
 				if sys.argv[i] == "--":
 					end_of_options = True
@@ -353,7 +353,7 @@ class MainWindow(QMainWindow):
 
 	def new_button(self):
 		global highlightTypes
-		highlightNames = highlightTypes.keys()
+		highlightNames = list(highlightTypes.keys())
 		highlightNames.sort()
 
 		# Let the user choose which type of file to create
@@ -918,13 +918,13 @@ class MainWindow(QMainWindow):
 
 		# Move any remaining tabs over to the main pane
 		tabs = []
-		for i in xrange(0, self.split_tab.count()):
+		for i in range(0, self.split_tab.count()):
 			tabs.append(self.split_tab.widget(i))
 		for tab in tabs:
 			self.tab.addTab(tab, tab.getTabName())
 
 		# Reactivate tab that was active before
-		for i in xrange(0, self.tab.count()):
+		for i in range(0, self.tab.count()):
 			if self.tab.widget(i) == active_tab:
 				self.tab.setCurrentIndex(i)
 				active_tab.view.setFocus(Qt.OtherFocusReason)
@@ -1056,16 +1056,16 @@ class MainWindow(QMainWindow):
 
 	def preferences(self):
 		if PreferencesDialog(self).exec_() == QDialog.Accepted:
-			for i in xrange(0, self.tab.count()):
+			for i in range(0, self.tab.count()):
 				self.tab.widget(i).font_changed()
-			for i in xrange(0, self.split_tab.count()):
+			for i in range(0, self.split_tab.count()):
 				self.split_tab.widget(i).font_changed()
 
 
 if __name__ == "__main__":
 	app = QApplication(sys.argv)
 	app.setWindowIcon(QIcon(loadPixmap("images/icon.png")))
-	Threads.gui_thread = thread.get_ident()
+	Threads.gui_thread = _thread.get_ident()
 	Threads.main_window = MainWindow()
 	app.exec_()
 

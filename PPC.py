@@ -20,9 +20,9 @@
 # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 # IN THE SOFTWARE.
 
-Registers = ["r%d" % i for i in xrange(0, 32)]
-RegisterOrZero = [0] + ["r%d" % i for i in xrange(1, 32)]
-FloatRegisters = ["f%d" % i for i in xrange(0, 32)]
+Registers = ["r%d" % i for i in range(0, 32)]
+RegisterOrZero = [0] + ["r%d" % i for i in range(1, 32)]
+FloatRegisters = ["f%d" % i for i in range(0, 32)]
 
 def all_conds(operation):
 	prefixes = ['', 'dnz', 'dz']
@@ -542,7 +542,7 @@ Group63Map = {
 	846: ["fcfid", ['frT', 'frB'], cond_bit]
 }
 
-for i in xrange(0, 32):
+for i in range(0, 32):
 	Group63Map[18 + (i << 5)] = ["fdiv", ['frT', 'frA', 'frB'], cond_bit]
 	Group63Map[20 + (i << 5)] = ["fsub", ['frT', 'frA', 'frB'], cond_bit]
 	Group63Map[21 + (i << 5)] = ["fadd", ['frT', 'frA', 'frB'], cond_bit]

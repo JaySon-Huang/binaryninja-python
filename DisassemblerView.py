@@ -49,7 +49,7 @@ class DisassemblerHistoryEntry:
 		self.highlight_token = view.highlight_token
 
 class DisassemblerView(QAbstractScrollArea):
-	statusUpdated = Signal(QWidget, name="statusUpdated")
+	statusUpdated = pyqtSignal(QWidget, name="statusUpdated")
 
 	def __init__(self, data, filename, view, parent):
 		super(DisassemblerView, self).__init__(parent)
@@ -216,7 +216,7 @@ class DisassemblerView(QAbstractScrollArea):
 		p.translate(self.renderXOfs - xofs, self.renderYOfs - yofs)
 
 		# Render each node
-		for block in self.blocks.values():
+		for block in list(self.blocks.values()):
 			# Render shadow
 			p.setPen(QColor(0, 0, 0, 0))
 			p.setBrush(QColor(0, 0, 0, 128))
@@ -299,7 +299,7 @@ class DisassemblerView(QAbstractScrollArea):
 		y = event.y() + yofs - self.renderYOfs
 
 		# Check each block for hits
-		for block in self.blocks.values():
+		for block in list(self.blocks.values()):
 			# Compute coordinate relative to text area in block
 			blockx = x - (block.x + (2 * self.charWidth))
 			blocky = y - (block.y + (2 * self.charWidth))
@@ -320,7 +320,7 @@ class DisassemblerView(QAbstractScrollArea):
 		y = event.y() + yofs - self.renderYOfs
 
 		# Check each block for hits
-		for block in self.blocks.values():
+		for block in list(self.blocks.values()):
 			# Compute coordinate relative to text area in block
 			blockx = x - (block.x + (2 * self.charWidth))
 			blocky = y - (block.y + (2 * self.charWidth))
@@ -350,7 +350,7 @@ class DisassemblerView(QAbstractScrollArea):
 		y = event.y() + yofs - self.renderYOfs
 
 		# Check each block for hits
-		for block in self.blocks.values():
+		for block in list(self.blocks.values()):
 			# Compute coordinate relative to text area in block
 			blockx = x - (block.x + (2 * self.charWidth))
 			blocky = y - (block.y + (2 * self.charWidth))
@@ -383,7 +383,7 @@ class DisassemblerView(QAbstractScrollArea):
 		return None
 
 	def find_instr(self, addr):
-		for block in self.blocks.values():
+		for block in list(self.blocks.values()):
 			for instr in block.block.instrs:
 				if instr.addr == addr:
 					return instr
@@ -525,7 +525,7 @@ class DisassemblerView(QAbstractScrollArea):
 		token = self.getTokenForMouseEvent(event)
 		if token and (token[2] == "ptr"):
 			self.analysis.lock.acquire()
-			if not self.analysis.functions.has_key(token[3]):
+			if token[3] not in self.analysis.functions:
 				# Not a function or not analyzed, go to address in hex editor
 				addr = token[3]
 				self.analysis.lock.release()
@@ -869,12 +869,12 @@ class DisassemblerView(QAbstractScrollArea):
 	def renderFunction(self, func):
 		# Create render nodes
 		self.blocks = {}
-		for block in func.blocks.values():
+		for block in list(func.blocks.values()):
 			self.blocks[block.entry] = DisassemblerBlock(block)
 			self.prepareGraphNode(self.blocks[block.entry])
 
 		# Populate incoming lists
-		for block in self.blocks.values():
+		for block in list(self.blocks.values()):
 			for edge in block.block.exits:
 				self.blocks[edge].incoming += [block.block.entry]
 
@@ -905,7 +905,7 @@ class DisassemblerView(QAbstractScrollArea):
 
 			# No more nodes satisfy constraints, pick a node to continue constructing the graph
 			best = None
-			for block in self.blocks.values():
+			for block in list(self.blocks.values()):
 				if not block.block.entry in visited:
 					continue
 				for edge in block.block.exits:
@@ -936,11 +936,11 @@ class DisassemblerView(QAbstractScrollArea):
 			for col in range(0, self.blocks[func.entry].col_count + 1):
 				horiz_edges[row][col] = []
 				vert_edges[row][col] = []
-		for block in self.blocks.values():
+		for block in list(self.blocks.values()):
 			edge_valid[block.row][block.col + 1] = False
 
 		# Perform edge routing
-		for block in self.blocks.values():
+		for block in list(self.blocks.values()):
 			start = block
 			for edge in block.block.exits:
 				end = self.blocks[edge]
@@ -964,7 +964,7 @@ class DisassemblerView(QAbstractScrollArea):
 		# Compute row and column sizes
 		col_width = [0] * (self.blocks[func.entry].col_count + 1)
 		row_height = [0] * (self.blocks[func.entry].row_count + 1)
-		for block in self.blocks.values():
+		for block in list(self.blocks.values()):
 			if (int(block.width / 2)) > col_width[block.col]:
 				col_width[block.col] = int(block.width / 2)
 			if (int(block.width / 2)) > col_width[block.col + 1]:
@@ -995,14 +995,14 @@ class DisassemblerView(QAbstractScrollArea):
 		self.height = y + 16 + (8 * row_edge_count[self.blocks[func.entry].row_count])
 
 		# Compute node positions
-		for block in self.blocks.values():
+		for block in list(self.blocks.values()):
 			block.x = int((col_x[block.col] + col_width[block.col] + 4 * col_edge_count[block.col + 1]) - (block.width / 2))
 			if (block.x + block.width) > (col_x[block.col] + col_width[block.col] + col_width[block.col + 1] + 8 * col_edge_count[block.col + 1]):
 				block.x = int((col_x[block.col] + col_width[block.col] + col_width[block.col + 1] + 8 * col_edge_count[block.col + 1]) - block.width)
 			block.y = row_y[block.row]
 
 		# Precompute coordinates for edges
-		for block in self.blocks.values():
+		for block in list(self.blocks.values()):
 			for edge in block.edges:
 				start = edge.points[0]
 				start_row = start[0]
@@ -1071,14 +1071,14 @@ class DisassemblerView(QAbstractScrollArea):
 
 		# View not up to date, check to see if active function is ready
 		self.analysis.lock.acquire()
-		if self.analysis.functions.has_key(self.function):
+		if self.function in self.analysis.functions:
 			if self.analysis.functions[self.function].ready:
 				# Active function now ready, generate graph
 				self.renderFunction(self.analysis.functions[self.function])
 		self.analysis.lock.release()
 
 	def show_cur_instr(self):
-		for block in self.blocks.values():
+		for block in list(self.blocks.values()):
 			row = len(block.block.header_text.lines)
 			for instr in block.block.instrs:
 				if self.cur_instr == instr.addr:
@@ -1093,7 +1093,7 @@ class DisassemblerView(QAbstractScrollArea):
 
 	def navigate(self, addr):
 		# Check to see if address is within current function
-		for block in self.blocks.values():
+		for block in list(self.blocks.values()):
 			row = len(block.block.header_text.lines)
 			for instr in block.block.instrs:
 				if (addr >= instr.addr) and (addr < (instr.addr + len(instr.opcode))):

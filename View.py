@@ -14,8 +14,9 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
-from PySide.QtCore import *
-from PySide.QtGui import *
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
 from PythonConsole import *
 
 ViewTypes = []
@@ -29,9 +30,9 @@ class HistoryEntry:
 		self.data = data
 
 class ViewFrame(QWidget):
-	statusUpdated = Signal(QWidget)
-	viewChanged = Signal(QWidget)
-	closeRequest = Signal(QWidget)
+	statusUpdated = pyqtSignal(QWidget)
+	viewChanged = pyqtSignal(QWidget)
+	closeRequest = pyqtSignal(QWidget)
 
 	def __init__(self, type, data, filename, viewList):
 		super(ViewFrame, self).__init__(None)
@@ -94,7 +95,7 @@ class ViewFrame(QWidget):
 	def setViewType(self, type):
 		self.view.setVisible(False)
 
-		if self.cache.has_key(type):
+		if type in self.cache:
 			view = self.cache[type]
 		else:
 			view = self.createView(type)
@@ -225,7 +226,8 @@ class ViewFrame(QWidget):
 	def save(self, filename):
 		try:
 			self.data.save(filename)
-		except IOError as (errno, msg):
+		except IOError as xxx_todo_changeme:
+			(errno, msg) = xxx_todo_changeme.args
 			QMessageBox.critical(self, "Error", "Unable to save: " + msg)
 			return False
 		self.notify_save(filename)
@@ -234,7 +236,7 @@ class ViewFrame(QWidget):
 	def notify_save(self, filename):
 		self.filename = filename
 		self.new_filename = True
-		for view in self.cache.values():
+		for view in list(self.cache.values()):
 			if hasattr(view, "notify_save"):
 				view.notify_save()
 
@@ -313,7 +315,7 @@ class ViewFrame(QWidget):
 		self.closeRequest.emit(self)
 
 	def font_changed(self):
-		for view in self.cache.values():
+		for view in list(self.cache.values()):
 			if hasattr(view, "fontChanged"):
 				view.fontChanged()
 

@@ -14,8 +14,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import sys
-from PySide.QtCore import *
-from PySide.QtGui import *
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
 from Fonts import *
 from View import *
 from BinaryData import *
@@ -31,7 +31,7 @@ class HexEditorHistoryEntry:
 		self.ascii = view.cursorAscii
 
 class HexEditor(QAbstractScrollArea):
-	statusUpdated = Signal(QWidget, name="statusUpdated")
+	statusUpdated = pyqtSignal(QWidget, name="statusUpdated")
 
 	def __init__(self, data, filename, view, parent):
 		super(HexEditor, self).__init__(parent)
@@ -200,8 +200,8 @@ class HexEditor(QAbstractScrollArea):
 		# Compute range that needs to be updated
 		topY = event.rect().y()
 		botY = topY + event.rect().height()
-		topY = (topY - 2) / self.charHeight
-		botY = ((botY - 2) / self.charHeight) + 1
+		topY = int((topY - 2) / self.charHeight)
+		botY = int(((botY - 2) / self.charHeight)) + 1
 
 		# Compute selection range
 		selection = False
@@ -418,7 +418,7 @@ class HexEditor(QAbstractScrollArea):
 					if (lineAddr + x) >= self.data.end():
 						lineStr += "   "
 					else:
-						byte = ord(bytes[x])
+						byte = bytes[x]
 						modification = modifications[x]
 
 						if modification == DATA_ORIGINAL:

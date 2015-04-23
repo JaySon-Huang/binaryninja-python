@@ -15,10 +15,12 @@
 
 import sys
 import os
-from PySide.QtCore import *
-from PySide.QtGui import *
-from PySide.QtWebKit import *
-from PySide.QtNetwork import *
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
+from PyQt5.QtWebKit import *
+from PyQt5.QtWebKitWidgets import QWebView
+from PyQt5.QtNetwork import *
 from View import *
 
 
