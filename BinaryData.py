@@ -258,7 +258,10 @@ class RemoveUndoEntry:
 
 class BinaryData(BinaryAccessor):
 	def __init__(self, data = ""):
-		self.data = data.encode('utf-8')
+		if type(data) is str:
+			self.data = data.encode('utf-8')
+		else:
+			self.data = data
 		self.modification = [DATA_ORIGINAL] * len(data)
 		self.modified = False
 		self.callbacks = []

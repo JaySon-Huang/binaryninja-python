@@ -256,7 +256,7 @@ class MachOFile(BinaryAccessor):
 						cmd.uint32_le("strsize")
 
 					self.symbol_table = self.tree.array(cmd.nsyms, "symtab")
-					strings = self.data.read(cmd.stroff, cmd.strsize)
+					strings = self.data.read(cmd.stroff, cmd.strsize).decode('utf-8')
 
 					sym_offset = cmd.symoff
 					for j in range(0, cmd.nsyms):
@@ -382,7 +382,7 @@ class MachOFile(BinaryAccessor):
 		value = 0
 		shift = 0
 		while ofs < len(data):
-			cur = ord(data[ofs])
+			cur = data[ofs]
 			ofs += 1
 			value |= (cur & 0x7f) << shift
 			shift += 7
@@ -405,7 +405,7 @@ class MachOFile(BinaryAccessor):
 			opcodes = self.data.read(offset, size)
 			i = 0
 			while i < len(opcodes):
-				opcode = ord(opcodes[i])
+				opcode = opcodes[i]
 				i += 1
 				if (opcode >> 4) == 0:
 					continue
@@ -420,9 +420,9 @@ class MachOFile(BinaryAccessor):
 					while i < len(opcodes):
 						ch = opcodes[i]
 						i += 1
-						if ch == '\x00':
+						if ch == b'\x00':
 							break
-						name += ch
+						name += chr(ch)
 				elif (opcode >> 4) == 5:
 					sym_type = opcode & 0xf
 				elif (opcode >> 4) == 6:
@@ -453,7 +453,7 @@ class MachOFile(BinaryAccessor):
 						skip, i = self.read_leb128(opcodes, i)
 
 	def read(self, ofs, len):
-		result = ""
+		result = b""
 		while len > 0:
 			cur = None
 			for i in self.segments:
@@ -471,7 +471,7 @@ class MachOFile(BinaryAccessor):
 				file_len = len
 
 			if file_len <= 0:
-				result += "\x00" * mem_len
+				result += b"\x00" * mem_len
 				len -= mem_len
 				ofs += mem_len
 				continue
@@ -597,13 +597,13 @@ class MachOFile(BinaryAccessor):
 		return max - self.start()
 
 	def is_macho(self):
-		if self.data.read(0, 4) == "\xfe\xed\xfa\xce":
+		if self.data.read(0, 4) == b"\xfe\xed\xfa\xce":
 			return True
-		if self.data.read(0, 4) == "\xfe\xed\xfa\xcf":
+		if self.data.read(0, 4) == b"\xfe\xed\xfa\xcf":
 			return True
-		if self.data.read(0, 4) == "\xce\xfa\xed\xfe":
+		if self.data.read(0, 4) == b"\xce\xfa\xed\xfe":
 			return True
-		if self.data.read(0, 4) == "\xcf\xfa\xed\xfe":
+		if self.data.read(0, 4) == b"\xcf\xfa\xed\xfe":
 			return True
 		return False
 
@@ -674,13 +674,13 @@ class MachOViewer(HexEditor):
 		view.register_navigate("exe", self, self.navigate)
 
 	def getPriority(data, ext):
-		if data.read(0, 4) == "\xfe\xed\xfa\xce":
+		if data.read(0, 4) == b"\xfe\xed\xfa\xce":
 			return 25
-		if data.read(0, 4) == "\xfe\xed\xfa\xcf":
+		if data.read(0, 4) == b"\xfe\xed\xfa\xcf":
 			return 25
-		if data.read(0, 4) == "\xce\xfa\xed\xfe":
+		if data.read(0, 4) == b"\xce\xfa\xed\xfe":
 			return 25
-		if data.read(0, 4) == "\xcf\xfa\xed\xfe":
+		if data.read(0, 4) == b"\xcf\xfa\xed\xfe":
 			return 25
 		return -1
 	getPriority = staticmethod(getPriority)

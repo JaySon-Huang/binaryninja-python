@@ -1197,7 +1197,7 @@ class TextEditor(QAbstractScrollArea):
 
 	def getPriority(data, filename):
 		ext = os.path.splitext(filename)[1].lower()
-		if data.read(0, 2) == '#!':
+		if data.read(0, 2) == b'#!':
 			# Shell script
 			return 25
 		elif os.path.basename(filename) == 'Makefile':

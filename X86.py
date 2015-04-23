@@ -671,7 +671,7 @@ def read8(state):
 		state.opcode = ""
 		return 0xcc
 
-	val = ord(state.opcode[0])
+	val = state.opcode[0]
 	state.opcode = state.opcode[1:]
 	state.prev_opcode = val
 	state.opcode_offset += 1
@@ -685,7 +685,7 @@ def peek8(state):
 		state.opcode = ""
 		return 0xcc
 
-	val = ord(state.opcode[0])
+	val = state.opcode[0]
 	return val
 
 def read16(state):
@@ -1835,7 +1835,7 @@ def process_prefixes(state):
 			continue
 		else:
 			# Not a prefix, continue instruction processing
-			state.opcode = chr(prefix) + state.opcode
+			state.opcode = prefix.to_bytes(1, 'big') + state.opcode
 			state.opcode_offset -= 1
 			break
 
@@ -1972,7 +1972,7 @@ def format_instruction_string(fmt, opcode, addr, instr):
 					break
 				elif fmt[i] == 'b':
 					for j in range(0, instr.length):
-						result += "%.2x" % ord(opcode[j])
+						result += "%.2x" % opcode[j]
 					for j in range(instr.length, width):
 						result += "  "
 					break
@@ -2033,7 +2033,7 @@ def format_instruction_string(fmt, opcode, addr, instr):
 							result += instr.operands[j].operand
 					break
 				elif (fmt[i] >= '0') and (fmt[i] <= '9'):
-					width = (width * 10) + (ord(fmt[i]) - 0x30)
+					width = (width * 10) + (fmt[i] - 0x30)
 				else:
 					result += fmt[i]
 					break

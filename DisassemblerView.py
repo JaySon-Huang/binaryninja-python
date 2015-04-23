@@ -288,8 +288,8 @@ class DisassemblerView(QAbstractScrollArea):
 			for edge in block.edges:
 				p.setPen(edge.color)
 				p.setBrush(edge.color)
-				p.drawPolyline(edge.polyline)
-				p.drawConvexPolygon(edge.arrow)
+				p.drawPolyline(QPolygon(edge.polyline))
+				p.drawConvexPolygon(QPolygon(edge.arrow))
 
 	def isMouseEventInBlock(self, event):
 		# Convert coordinates to system used in blocks
@@ -727,7 +727,7 @@ class DisassemblerView(QAbstractScrollArea):
 		block.row = 0
 		if col >= 2:
 			# Place this node centered over the child nodes
-			block.col = (col - 2) / 2
+			block.col = int((col - 2) / 2)
 			block.col_count = col
 		else:
 			# No child nodes, set single node's width (nodes are 2 columns wide to allow

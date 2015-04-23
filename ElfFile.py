@@ -508,7 +508,7 @@ class ElfViewer(HexEditor):
 		view.register_navigate("exe", self, self.navigate)
 
 	def getPriority(data, ext):
-		if data.read(0, 4) == "\x7fELF":
+		if data.read(0, 4) == b"\x7fELF":
 			return 25
 		return -1
 	getPriority = staticmethod(getPriority)

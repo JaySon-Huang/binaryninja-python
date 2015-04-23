@@ -524,13 +524,13 @@ class PEViewer(HexEditor):
 		view.register_navigate("exe", self, self.navigate)
 
 	def getPriority(data, ext):
-		if data.read(0, 2) != "MZ":
+		if data.read(0, 2) != b"MZ":
 			return -1
 		ofs = data.read(0x3c, 4)
 		if len(ofs) != 4:
 			return -1
 		ofs = struct.unpack("<I", ofs)[0]
-		if data.read(ofs, 4) != "PE\0\0":
+		if data.read(ofs, 4) != b"PE\0\0":
 			return -1
 		magic = data.read(ofs + 24, 2)
 		if len(magic) != 2:
