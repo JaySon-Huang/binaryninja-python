@@ -20,56 +20,56 @@ from TerminalView import *
 
 
 class RunWindow(QWidget):
-	def __init__(self, parent, view, cmd):
-		super(RunWindow, self).__init__(parent)
-		self.view = view
-		self.cmd = cmd
+    def __init__(self, parent, view, cmd):
+        super(RunWindow, self).__init__(parent)
+        self.view = view
+        self.cmd = cmd
 
-		vlayout = QVBoxLayout()
-		vlayout.setContentsMargins(0, 0, 0, 0)
-		vlayout.setSpacing(0)
+        vlayout = QVBoxLayout()
+        vlayout.setContentsMargins(0, 0, 0, 0)
+        vlayout.setSpacing(0)
 
-		hlayout = QHBoxLayout()
-		hlayout.setContentsMargins(4, 0, 4, 4)
-		hlayout.addWidget(QLabel("Command arguments:"))
-		hlayout.setSpacing(4)
+        hlayout = QHBoxLayout()
+        hlayout.setContentsMargins(4, 0, 4, 4)
+        hlayout.addWidget(QLabel("Command arguments:"))
+        hlayout.setSpacing(4)
 
-		self.commandLine = QLineEdit()
-		self.commandLine.returnPressed.connect(self.run)
-		hlayout.addWidget(self.commandLine, 1)
+        self.commandLine = QLineEdit()
+        self.commandLine.returnPressed.connect(self.run)
+        hlayout.addWidget(self.commandLine, 1)
 
-		self.runButton = QPushButton("Run")
-		self.runButton.clicked.connect(self.run)
-		self.runButton.setAutoDefault(True)
-		self.closeButton = QPushButton("Close")
-		self.closeButton.clicked.connect(self.closePanel)
-		self.closeButton.setAutoDefault(False)
-		hlayout.addWidget(self.runButton)
-		hlayout.addWidget(self.closeButton)
+        self.runButton = QPushButton("Run")
+        self.runButton.clicked.connect(self.run)
+        self.runButton.setAutoDefault(True)
+        self.closeButton = QPushButton("Close")
+        self.closeButton.clicked.connect(self.closePanel)
+        self.closeButton.setAutoDefault(False)
+        hlayout.addWidget(self.runButton)
+        hlayout.addWidget(self.closeButton)
 
-		vlayout.addLayout(hlayout)
+        vlayout.addLayout(hlayout)
 
-		self.term = TerminalView(None, "", view, self)
-		self.reinit = False
+        self.term = TerminalView(None, "", view, self)
+        self.reinit = False
 
-		vlayout.addWidget(self.term, 1)
-		self.setLayout(vlayout)
+        vlayout.addWidget(self.term, 1)
+        self.setLayout(vlayout)
 
-	def run(self):
-		if self.reinit:
-			self.term.reinit()
-			self.reinit = False
-			return
+    def run(self):
+        if self.reinit:
+            self.term.reinit()
+            self.reinit = False
+            return
 
-		cmdLine = self.commandLine.text()
-		args = [i.decode("string_escape") for i in shlex.split(cmdLine.encode('utf8'))]
-		self.term.restart(self.cmd + args)
+        cmdLine = self.commandLine.text()
+        args = [i.decode("string_escape") for i in shlex.split(cmdLine.encode('utf8'))]
+        self.term.restart(self.cmd + args)
 
-	def closePanel(self):
-		self.term.closeRequest()
-		self.view.terminal_closed()
-		self.reinit = True
+    def closePanel(self):
+        self.term.closeRequest()
+        self.view.terminal_closed()
+        self.reinit = True
 
-	def closeRequest(self):
-		self.term.closeRequest()
+    def closeRequest(self):
+        self.term.closeRequest()
 

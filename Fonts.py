@@ -23,75 +23,75 @@ allowBold = None
 
 
 def getDefaultMonospaceFont():
-	if sys.platform == 'darwin':
-		font = QFont('Monaco', 12)
-	elif sys.platform.find('linux') != -1:
-		font = QFont('Monospace', 10)
-	elif sys.platform.find('freebsd') != -1:
-		font = QFont('Bitstream Vera Sans Mono', 10)
-	else:
-		font = QFont('Courier', 10)
-	return font
+    if sys.platform == 'darwin':
+        font = QFont('Monaco', 12)
+    elif sys.platform.find('linux') != -1:
+        font = QFont('Monospace', 10)
+    elif sys.platform.find('freebsd') != -1:
+        font = QFont('Bitstream Vera Sans Mono', 10)
+    else:
+        font = QFont('Courier', 10)
+    return font
 
 def getMonospaceFont():
-	global monospaceFont
-	if monospaceFont is None:
-		settings = QSettings("Binary Ninja", "Binary Ninja")
-		monospaceFont = settings.value("font", getDefaultMonospaceFont())
-	font = QFont(monospaceFont)
-	font.setFixedPitch(True)
-	font.setStyleHint(QFont.Courier)
-	return font
+    global monospaceFont
+    if monospaceFont is None:
+        settings = QSettings("Binary Ninja", "Binary Ninja")
+        monospaceFont = settings.value("font", getDefaultMonospaceFont())
+    font = QFont(monospaceFont)
+    font.setFixedPitch(True)
+    font.setStyleHint(QFont.Courier)
+    return font
 
 def setMonospaceFont(font):
-	global monospaceFont
-	if font is None:
-		font = getDefaultMonospaceFont()
-	monospaceFont = font
-	settings = QSettings("Binary Ninja", "Binary Ninja")
-	settings.setValue("font", monospaceFont)
+    global monospaceFont
+    if font is None:
+        font = getDefaultMonospaceFont()
+    monospaceFont = font
+    settings = QSettings("Binary Ninja", "Binary Ninja")
+    settings.setValue("font", monospaceFont)
 
 def getDefaultExtraFontSpacing():
-	if sys.platform == 'darwin':
-		return 1
-	if sys.platform.find('freebsd') != -1:
-		return 2
-	return 0
+    if sys.platform == 'darwin':
+        return 1
+    if sys.platform.find('freebsd') != -1:
+        return 2
+    return 0
 
 def getExtraFontSpacing():
-	global lineSpacing
-	if lineSpacing is None:
-		settings = QSettings("Binary Ninja", "Binary Ninja")
-		lineSpacing = int(settings.value("spacing", getDefaultExtraFontSpacing()))
-	return lineSpacing
+    global lineSpacing
+    if lineSpacing is None:
+        settings = QSettings("Binary Ninja", "Binary Ninja")
+        lineSpacing = int(settings.value("spacing", getDefaultExtraFontSpacing()))
+    return lineSpacing
 
 def setExtraFontSpacing(spacing):
-	global lineSpacing
-	if spacing is None:
-		spacing = getDefaultExtraFontSpacing()
-	lineSpacing = spacing
-	settings = QSettings("Binary Ninja", "Binary Ninja")
-	settings.setValue("spacing", lineSpacing)
+    global lineSpacing
+    if spacing is None:
+        spacing = getDefaultExtraFontSpacing()
+    lineSpacing = spacing
+    settings = QSettings("Binary Ninja", "Binary Ninja")
+    settings.setValue("spacing", lineSpacing)
 
 def getFontVerticalOffset():
-	spacing = getExtraFontSpacing()
-	return int((spacing + 1) / 2)
+    spacing = getExtraFontSpacing()
+    return int((spacing + 1) / 2)
 
 def allowBoldFonts():
-	global allowBold
-	if allowBold is None:
-		settings = QSettings("Binary Ninja", "Binary Ninja")
-		allowBold = int(settings.value("allow_bold", 1)) != 0
-	return allowBold
+    global allowBold
+    if allowBold is None:
+        settings = QSettings("Binary Ninja", "Binary Ninja")
+        allowBold = int(settings.value("allow_bold", 1)) != 0
+    return allowBold
 
 def setAllowBoldFonts(allow):
-	global allowBold
-	if allow is None:
-		allow = True
-	allowBold = allow
-	settings = QSettings("Binary Ninja", "Binary Ninja")
-	if allowBold:
-		settings.setValue("allow_bold", 1)
-	else:
-		settings.setValue("allow_bold", 0)
+    global allowBold
+    if allow is None:
+        allow = True
+    allowBold = allow
+    settings = QSettings("Binary Ninja", "Binary Ninja")
+    if allowBold:
+        settings.setValue("allow_bold", 1)
+    else:
+        settings.setValue("allow_bold", 0)
 

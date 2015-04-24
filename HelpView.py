@@ -25,29 +25,29 @@ from View import *
 
 
 class HelpView(QWebView):
-	def __init__(self, data, filename, view, parent):
-		super(HelpView, self).__init__(parent)
+    def __init__(self, data, filename, view, parent):
+        super(HelpView, self).__init__(parent)
 
-		self.data = data
+        self.data = data
 
-		# Set contents
-		self.setUrl(QUrl.fromLocalFile(str(self.data)))
+        # Set contents
+        self.setUrl(QUrl.fromLocalFile(str(self.data)))
 
-	def closeRequest(self):
-		return True
+    def closeRequest(self):
+        return True
 
-	def getPriority(data, filename):
-		# Never use this view unless explicitly needed
-		return -1
-	getPriority = staticmethod(getPriority)
+    def getPriority(data, filename):
+        # Never use this view unless explicitly needed
+        return -1
+    getPriority = staticmethod(getPriority)
 
-	def getViewName():
-		return "Help viewer"
-	getViewName = staticmethod(getViewName)
+    def getViewName():
+        return "Help viewer"
+    getViewName = staticmethod(getViewName)
 
-	def getShortViewName():
-		return "Help"
-	getShortViewName = staticmethod(getShortViewName)
+    def getShortViewName():
+        return "Help"
+    getShortViewName = staticmethod(getShortViewName)
 
 ViewTypes += [HelpView]
 

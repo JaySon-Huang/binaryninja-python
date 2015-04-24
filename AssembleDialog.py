@@ -21,51 +21,51 @@ import nasm
 
 
 class AssembleDialog(QDialog):
-	def __init__(self, parent):
-		super(AssembleDialog, self).__init__(parent)
+    def __init__(self, parent):
+        super(AssembleDialog, self).__init__(parent)
 
-		self.setWindowTitle("Assemble")
+        self.setWindowTitle("Assemble")
 
-		settings = QSettings("Binary Ninja", "Binary Ninja")
+        settings = QSettings("Binary Ninja", "Binary Ninja")
 
-		layout = QVBoxLayout()
+        layout = QVBoxLayout()
 
-		self.data = BinaryData(settings.value("assemble/text", ""))
-		self.edit = ViewFrame(TextEditor, self.data, "", [TextEditor])
-		self.edit.setMinimumSize(512, 384)
-		layout.addWidget(self.edit, 1)
+        self.data = BinaryData(settings.value("assemble/text", ""))
+        self.edit = ViewFrame(TextEditor, self.data, "", [TextEditor])
+        self.edit.setMinimumSize(512, 384)
+        layout.addWidget(self.edit, 1)
 
-		self.closeButton = QPushButton("Close")
-		self.closeButton.clicked.connect(self.closeRequest)
-		self.closeButton.setAutoDefault(False)
+        self.closeButton = QPushButton("Close")
+        self.closeButton.clicked.connect(self.closeRequest)
+        self.closeButton.setAutoDefault(False)
 
-		self.assembleButton = QPushButton("Assemble")
-		self.assembleButton.clicked.connect(self.assemble)
-		self.assembleButton.setAutoDefault(True)
+        self.assembleButton = QPushButton("Assemble")
+        self.assembleButton.clicked.connect(self.assemble)
+        self.assembleButton.setAutoDefault(True)
 
-		buttonLayout = QHBoxLayout()
-		buttonLayout.setContentsMargins(0, 0, 0, 0)
-		buttonLayout.addStretch(1)
-		buttonLayout.addWidget(self.assembleButton)
-		buttonLayout.addWidget(self.closeButton)
-		layout.addLayout(buttonLayout)
-		self.setLayout(layout)
+        buttonLayout = QHBoxLayout()
+        buttonLayout.setContentsMargins(0, 0, 0, 0)
+        buttonLayout.addStretch(1)
+        buttonLayout.addWidget(self.assembleButton)
+        buttonLayout.addWidget(self.closeButton)
+        layout.addLayout(buttonLayout)
+        self.setLayout(layout)
 
-	def saveSettings(self):
-		settings = QSettings("Binary Ninja", "Binary Ninja")
-		settings.setValue("assemble/text", self.data.read(0, len(self.data)))
+    def saveSettings(self):
+        settings = QSettings("Binary Ninja", "Binary Ninja")
+        settings.setValue("assemble/text", self.data.read(0, len(self.data)))
 
-	def assemble(self):
-		data, error = nasm.assemble(str(self.data.read(0, len(self.data))))
-		if error is not None:
-			QMessageBox.critical(self, "Assemble Failed", error, QMessageBox.Ok)
-			return
+    def assemble(self):
+        data, error = nasm.assemble(str(self.data.read(0, len(self.data))))
+        if error is not None:
+            QMessageBox.critical(self, "Assemble Failed", error, QMessageBox.Ok)
+            return
 
-		self.output = data
-		self.saveSettings()
-		self.accept()
+        self.output = data
+        self.saveSettings()
+        self.accept()
 
-	def closeRequest(self):
-		self.saveSettings()
-		self.close()
+    def closeRequest(self):
+        self.saveSettings()
+        self.close()
 
