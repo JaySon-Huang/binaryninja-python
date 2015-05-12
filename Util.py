@@ -14,8 +14,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import struct
-from PySide.QtCore import *
-from PySide.QtGui import *
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
 from Crypto.Hash import MD2
 from Crypto.Hash import MD4
 from Crypto.Hash import MD5

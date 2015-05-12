@@ -14,8 +14,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
-from PySide.QtCore import *
-from PySide.QtGui import *
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
 from PythonConsole import *
 
 ViewTypes = []
@@ -29,9 +29,9 @@ class HistoryEntry:
 		self.data = data
 
 class ViewFrame(QWidget):
-	statusUpdated = Signal(QWidget)
-	viewChanged = Signal(QWidget)
-	closeRequest = Signal(QWidget)
+	statusUpdated = pyqtSignal(QWidget)
+	viewChanged = pyqtSignal(QWidget)
+	closeRequest = pyqtSignal(QWidget)
 
 	def __init__(self, type, data, filename, viewList):
 		super(ViewFrame, self).__init__(None)

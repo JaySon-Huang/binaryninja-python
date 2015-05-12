@@ -49,7 +49,7 @@ class DisassemblerHistoryEntry:
 		self.highlight_token = view.highlight_token
 
 class DisassemblerView(QAbstractScrollArea):
-	statusUpdated = Signal(QWidget, name="statusUpdated")
+	statusUpdated = pyqtSignal(QWidget, name="statusUpdated")
 
 	def __init__(self, data, filename, view, parent):
 		super(DisassemblerView, self).__init__(parent)
@@ -288,8 +288,8 @@ class DisassemblerView(QAbstractScrollArea):
 			for edge in block.edges:
 				p.setPen(edge.color)
 				p.setBrush(edge.color)
-				p.drawPolyline(edge.polyline)
-				p.drawConvexPolygon(edge.arrow)
+				p.drawPolyline(QPolygon(edge.polyline))
+				p.drawConvexPolygon(QPolygon(edge.arrow))
 
 	def isMouseEventInBlock(self, event):
 		# Convert coordinates to system used in blocks

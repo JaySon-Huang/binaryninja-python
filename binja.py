@@ -23,8 +23,8 @@ import zlib
 import stat
 import thread
 import Threads
-from PySide.QtCore import *
-from PySide.QtGui import *
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
 from View import *
 from BinaryData import *
 from HexEditor import *

@@ -13,8 +13,9 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from PySide.QtCore import *
-from PySide.QtGui import *
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
 from Fonts import *
 import code
 import sys
@@ -163,8 +164,8 @@ class PythonConsoleThread(threading.Thread):
 				self.done.set()
 
 class PythonConsoleLineEdit(QLineEdit):
-	prevHistory = Signal(())
-	nextHistory = Signal(())
+	prevHistory = pyqtSignal(())
+	nextHistory = pyqtSignal(())
 
 	def __init__(self, *args):
 		super(PythonConsoleLineEdit, self).__init__(*args)

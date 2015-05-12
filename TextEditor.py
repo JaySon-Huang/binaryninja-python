@@ -15,8 +15,8 @@
 
 import sys
 import os
-from PySide.QtCore import *
-from PySide.QtGui import *
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
 from Fonts import *
 from View import *
 from BinaryData import *
@@ -41,7 +41,7 @@ class TextEditorHistoryEntry:
 
 
 class TextEditor(QAbstractScrollArea):
-	statusUpdated = Signal(QWidget, name="statusUpdated")
+	statusUpdated = pyqtSignal(QWidget, name="statusUpdated")
 
 	def __init__(self, data, filename, view, parent):
 		super(TextEditor, self).__init__(parent)
