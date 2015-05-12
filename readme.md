@@ -9,7 +9,7 @@ Binary Ninja and the Binary Ninja logo are trademarks of Vector 35 LLC.
 Binary Ninja is cross-platform and can run on Linux, Mac OS X, Windows, and FreeBSD. In order to run Binary Ninja, you will need to install a few prerequisites:
 
 * [Python 2.7](https://www.python.org/downloads/)
-* [PySide](https://pypi.python.org/pypi/PySide#installing-prerequisites) for Qt Python bindings
+* [PyQt5](http://www.riverbankcomputing.com/software/pyqt/download5) for Qt Python bindings
 * The [pycrypto](https://www.dlitz.net/software/pycrypto/) library
 
 You can start Binary Ninja by running `binja.py` in the Python interpreter.
